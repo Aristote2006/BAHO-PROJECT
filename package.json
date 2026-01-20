@@ -1,0 +1,20 @@
+{
+  "name": "baho-africa",
+  "version": "1.0.0",
+  "description": "BAHO AFRICA Creative and Culture Hub Website",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "nodemon server/server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+  },
+  "dependencies": {
+    "concurrently": "^7.0.0",
+    "nodemon": "^2.0.15"
+  },
+  "keywords": ["mern", "react", "node", "express", "mongodb", "material-ui"],
+  "author": "BAHO AFRICA",
+  "license": "MIT"
+}

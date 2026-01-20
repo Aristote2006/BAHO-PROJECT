@@ -1,0 +1,170 @@
+import React from 'react';
+import { Container, Box, Typography, Grid, Paper, Card, CardContent, CardMedia, CardActions, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: 8,
+  boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+  },
+}));
+
+const ProjectsPage = () => {
+  const projects = [
+    {
+      id: 1,
+      title: "Baho Performing Arts",
+      description: "Showcasing African performing arts through theater, dance, and music performances. This program provides a platform for local artists to showcase their talents and connect with audiences.",
+      image: "/images/LeeImage_128_project.jpg",
+      category: "Performing Arts"
+    },
+    {
+      id: 2,
+      title: "Talent Gear Program",
+      description: "A comprehensive talent development program for emerging artists and creatives. The program includes mentorship, skills training, and exhibition opportunities.",
+      image: "/images/LeeImage_150.jpg",
+      category: "Education"
+    },
+    {
+      id: 3,
+      title: "Baho Events",
+      description: "Organizing cultural events, festivals, and exhibitions to promote African arts and culture. These events provide networking opportunities and exposure for artists.",
+      image: "/images/BAHO(28).jpg",
+      category: "Cultural Events"
+    },
+    {
+      id: 4,
+      title: "Heritage Preservation Initiative",
+      description: "A program focused on documenting and preserving traditional African art forms, crafts, and cultural practices for future generations.",
+      image: "/images/LeeImage_61.jpg",
+      category: "Heritage"
+    },
+    {
+      id: 5,
+      title: "Creative Entrepreneurship Program",
+      description: "Training and support for creative professionals to build sustainable businesses in the creative economy. Includes business development and marketing training.",
+      image: "/images/LeeImage_200.jpg",
+      category: "Entrepreneurship"
+    },
+    {
+      id: 6,
+      title: "Inclusive Arts Project",
+      description: "Specialized programs for artists with disabilities, refugees, and other marginalized communities, ensuring equal access to creative opportunities.",
+      image: "/images/LeeImage_38.jpg",
+      category: "Inclusion"
+    }
+  ];
+
+  return (
+    <div>
+      {/* Hero Section */}
+      <Box 
+        sx={{ 
+          height: '40vh', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          background: 'linear-gradient(rgba(1, 35, 75, 0.8), rgba(1, 35, 75, 0.8)), url(/images/LeeImage_153.jpg) center/cover no-repeat',
+          color: 'white',
+          textAlign: 'center'
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography variant="h2" component="h1" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} gutterBottom sx={{ fontWeight: 700 }}>
+            Our Projects
+          </Typography>
+          <Typography variant="h5" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ maxWidth: '800px', mx: 'auto', color: '#D4AF37' }}>
+            Empowering communities through diverse creative initiatives
+          </Typography>
+        </Container>
+      </Box>
+
+      <Container maxWidth="lg" sx={{ py: 8, background: 'linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url(/images/LeeImage_107.jpg) center/cover', borderRadius: 2, p: 3 }}>
+        <Typography variant="h3" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 8 }}>
+          Current Projects
+        </Typography>
+        
+        <Grid container spacing={6}>
+          {projects.map((project) => (
+            <Grid item xs={12} md={6} lg={4} key={project.id}>
+              <StyledCard>
+                <CardMedia
+                  component="img"
+                  height="250"
+                  image={project.image}
+                  alt={project.title}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="overline" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} gutterBottom sx={{ color: '#D4AF37', fontWeight: 600, display: 'inline-block', pb: 1 }}>
+                    {project.category}
+                  </Typography>
+                  <Typography gutterBottom variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
+                    {project.title}
+                  </Typography>
+                  <Typography variant="body2" className="text-fade-in-up" style={{ animationDelay: '0.4s' }} sx={{ color: '#4A4A4A', lineHeight: 1.6 }}>
+                    {project.description}
+                  </Typography>
+                </CardContent>
+                <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
+                  <Button 
+                    size="small" 
+                    className="text-fade-in-up"
+                    style={{ animationDelay: '0.5s' }}
+                    component={Link} 
+                    to={`/projects/${project.id}`}
+                    sx={{ 
+                      color: '#01234B',
+                      borderColor: '#01234B',
+                      '&:hover': {
+                        backgroundColor: '#01234B',
+                        color: 'white',
+                      }
+                    }}
+                  >
+                    Learn More
+                  </Button>
+                </CardActions>
+              </StyledCard>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Project Categories */}
+        <Box sx={{ mt: 10 }}>
+          <Typography variant="h3" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 6 }}>
+            Project Categories
+          </Typography>
+          <Grid container spacing={3} justifyContent="center">
+            {['Performing Arts', 'Education', 'Cultural Events', 'Heritage', 'Entrepreneurship', 'Inclusion'].map((category, index) => (
+              <Grid item key={index}>
+                <Paper 
+                  elevation={2} 
+                  sx={{ 
+                    px: 3, 
+                    py: 1.5, 
+                    borderRadius: 20,
+                    backgroundColor: index % 2 === 0 ? '#01234B' : '#D4AF37',
+                    color: index % 2 === 0 ? 'white' : '#01234B',
+                  }}
+                >
+                  <Typography variant="body1" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ fontWeight: 500 }}>
+                    {category}
+                  </Typography>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Container>
+    </div>
+  );
+};
+
+export default ProjectsPage;
