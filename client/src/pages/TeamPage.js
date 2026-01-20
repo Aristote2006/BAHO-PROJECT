@@ -116,13 +116,13 @@ const TeamPage = () => {
       id: 4,
       name: 'RUKUNDO HERITIER',
       position: 'Project Coordinator',
-      image: '/images/HERITIER.jpg'
+      image: '/images/HERITIER.JPG'
     },
     {
       id: 5,
       name: 'MUGISHA ALAIN',
       position: 'Creative Director',
-      image: '/images/LeeImage_140.JPG'
+      image: '/images/LeeImage_140.jpg'
     },
     {
       id: 6,
@@ -153,7 +153,7 @@ const TeamPage = () => {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center',
-          background: 'linear-gradient(rgba(1, 35, 75, 0.8), rgba(1, 35, 75, 0.8)), url(/images/LeeImage_130.jpg) center/cover no-repeat',
+          background: 'linear-gradient(rgba(1, 35, 75, 0.8), rgba(1, 35, 75, 0.8)), url("/images/luc%20images_130.JPG") center/cover no-repeat',
           color: 'white',
           textAlign: 'center'
         }}

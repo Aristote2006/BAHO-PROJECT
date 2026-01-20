@@ -130,7 +130,7 @@ const HomePage = () => {
   const heroImages = [
     '/images/Baho-Night-1-_6.JPG',
     '/images/Baho-Night-1-_3.JPG',
-    '/images/LeeImage_140.JPG',
+    '/images/LeeImage_140.jpg',
     '/images/WhatsApp Image 2025-02-25 at 10.37.04 PM (1).jpeg',
     '/images/LeeImage_120.jpg'
   ];

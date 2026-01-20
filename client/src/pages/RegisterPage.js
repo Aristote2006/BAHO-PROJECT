@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Container, Box, Typography, TextField, Button, Paper, Link, Grid, Alert } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
+import { authService } from '../services/apiService';
+
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -24,15 +26,16 @@ const RegisterPage = () => {
     setError('');
     
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, email, password }),
-      });
+      const response = await authService.register({ firstName, lastName, email, password });
       
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(text || 'Server returned an invalid response');
+      }
       
       if (response.ok) {
         // Store token and user info in localStorage
