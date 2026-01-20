@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true,
     trim: true
@@ -10,25 +10,33 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  date: {
-    type: Date,
-    required: true
-  },
-  time: {
-    type: String,
-    required: true
+  scope: {
+    startDate: {
+      type: Date,
+      required: true
+    },
+    endDate: {
+      type: Date,
+      required: true
+    }
   },
   location: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
-  link: {
+  category: {
     type: String,
-    default: ''
+    required: true,
+    trim: true
   },
   image: {
     type: String, // Will store image path or URL
     default: ''
+  },
+  featured: {
+    type: Boolean,
+    default: false
   },
   createdAt: {
     type: Date,

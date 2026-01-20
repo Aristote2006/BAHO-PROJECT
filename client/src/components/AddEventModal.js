@@ -9,18 +9,22 @@ import {
   Box,
   Typography,
   IconButton,
-  Grid
+  Grid,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 
 const AddEventModal = ({ open, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    title: '',
     description: '',
     date: '',
     time: '',
     location: '',
-    link: '',
+    category: 'Event',
     image: null
   });
 
@@ -41,15 +45,21 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      scope: {
+        startDate: formData.date,
+        endDate: formData.date
+      }
+    });
     // Reset form
     setFormData({
-      name: '',
+      title: '',
       description: '',
       date: '',
       time: '',
       location: '',
-      link: '',
+      category: 'Event',
       image: null
     });
     onClose();
@@ -86,9 +96,9 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Event Name"
-                name="name"
-                value={formData.name}
+                label="Event Title"
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
                 required
                 InputProps={{
@@ -120,8 +130,8 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
               <TextField
                 fullWidth
                 multiline
-                rows={3}
-                label="Description"
+                rows={4}
+                label="Event Description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -155,7 +165,7 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
               <TextField
                 fullWidth
                 type="date"
-                label="Date"
+                label="Event Date"
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
@@ -185,7 +195,7 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
               <TextField
                 fullWidth
                 type="time"
-                label="Time"
+                label="Event Time"
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
@@ -219,6 +229,7 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
                 value={formData.location}
                 onChange={handleChange}
                 required
+                placeholder="Enter event location"
                 InputProps={{
                   sx: {
                     '& .MuiOutlinedInput-notchedOutline': {
@@ -244,16 +255,14 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
               />
             </Grid>
             
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Event Link (optional)"
-                name="link"
-                value={formData.link}
-                onChange={handleChange}
-                placeholder="https://example.com/event"
-                InputProps={{
-                  sx: {
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required>
+                <InputLabel sx={{ color: '#D4AF37' }}>Category</InputLabel>
+                <Select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  sx={{
                     '& .MuiOutlinedInput-notchedOutline': {
                       borderColor: '#D4AF37'
                     },
@@ -262,19 +271,27 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                       borderColor: '#F9E79F'
+                    },
+                    '& .MuiInputBase-input': { color: 'white' },
+                    '& .MuiSelect-select': { color: 'white' }
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#01234B',
+                        color: 'white'
+                      }
                     }
-                  }
-                }}
-                InputLabelProps={{
-                  sx: {
-                    color: '#D4AF37'
-                  }
-                }}
-                sx={{ 
-                  '& .MuiInputBase-input': { color: 'white' },
-                  '& .MuiFormLabel-root': { color: '#D4AF37' }
-                }}
-              />
+                  }}
+                >
+                  <MenuItem value="Event">Event</MenuItem>
+                  <MenuItem value="Festival">Festival</MenuItem>
+                  <MenuItem value="Workshop">Workshop</MenuItem>
+                  <MenuItem value="Exhibition">Exhibition</MenuItem>
+                  <MenuItem value="Conference">Conference</MenuItem>
+                  <MenuItem value="Cultural">Cultural</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             
             <Grid item xs={12}>

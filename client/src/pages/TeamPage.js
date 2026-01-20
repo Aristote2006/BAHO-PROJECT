@@ -30,13 +30,16 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const ImageContainer = styled(Box)({
+const ImageContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: 350,
+  height: 280,
+  [theme.breakpoints.up('sm')]: {
+    height: 350,
+  },
   overflow: 'hidden',
   position: 'relative',
   borderRadius: '24px 24px 0 0',
-});
+}));
 
 const ValueCard = styled(Card)(({ theme }) => ({
   height: '100%',

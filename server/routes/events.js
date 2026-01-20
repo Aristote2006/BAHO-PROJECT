@@ -5,7 +5,7 @@ const router = express.Router();
 // Get all events
 router.get('/', async (req, res) => {
   try {
-    const events = await Event.find().sort({ date: 1 });
+    const events = await Event.find().sort({ createdAt: -1 });
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching events', error: error.message });
@@ -29,23 +29,26 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const {
-      name,
+      title,
       description,
-      date,
-      time,
+      scope,
       location,
-      link,
-      image
+      category,
+      image,
+      featured
     } = req.body;
 
     const event = new Event({
-      name,
+      title,
       description,
-      date: new Date(date),
-      time,
+      scope: {
+        startDate: new Date(scope.startDate),
+        endDate: new Date(scope.endDate)
+      },
       location,
-      link: link || '',
-      image: image || ''
+      category,
+      image: image || '',
+      featured: featured || false
     });
 
     const savedEvent = await event.save();
@@ -59,25 +62,28 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const {
-      name,
+      title,
       description,
-      date,
-      time,
+      scope,
       location,
-      link,
-      image
+      category,
+      image,
+      featured
     } = req.body;
 
     const updatedEvent = await Event.findByIdAndUpdate(
       req.params.id,
       {
-        name,
+        title,
         description,
-        date: new Date(date),
-        time,
+        scope: {
+          startDate: new Date(scope.startDate),
+          endDate: new Date(scope.endDate)
+        },
         location,
-        link: link || '',
-        image: image || ''
+        category,
+        image: image || '',
+        featured: featured || false
       },
       { new: true, runValidators: true }
     );

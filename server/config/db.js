@@ -39,7 +39,9 @@ const connectDB = async () => {
       console.log('Try changing your DNS to 8.8.8.8 (Google) or 1.1.1.1 (Cloudflare).');
     }
     
-    process.exit(1);
+    // Don't exit the process, just log the error
+    // This allows the server to continue running even without DB connection
+    console.log('Server will continue running without database connection');
   }
 };
 

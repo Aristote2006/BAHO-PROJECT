@@ -27,62 +27,38 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import AddEventModal from '../components/AddEventModal';
 import AddProjectModal from '../components/AddProjectModal';
+import { eventService, projectService } from '../services/apiService';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [events, setEvents] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [loadingProjects, setLoadingProjects] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate fetching data
-    setTimeout(() => {
-      setEvents([
-        {
-          id: 1,
-          name: "BAHO Cultural Festival",
-          description: "Annual celebration of African arts and culture",
-          date: "2024-12-15",
-          time: "18:00",
-          location: "Kigali Convention Center",
-          link: "https://baho-africa.com/festival"
-        },
-        {
-          id: 2,
-          name: "Creative Workshop Series",
-          description: "Monthly workshops for local artists",
-          date: "2024-11-20",
-          time: "14:00",
-          location: "BAHO Creative Hub",
-          link: "https://baho-africa.com/workshops"
-        }
-      ]);
-      
-      setProjects([
-        {
-          id: 1,
-          title: "Community Art Program",
-          description: "Empowering local communities through art education",
-          scope: "2024-01-01 to 2024-12-31",
-          leader: "NDATIMANA FABRICE",
-          status: "Active"
-        },
-        {
-          id: 2,
-          title: "Digital Heritage Archive",
-          description: "Preserving traditional African art digitally",
-          scope: "2024-03-01 to 2024-09-30",
-          leader: "TERRI MAYHAN",
-          status: "Planning"
-        }
-      ]);
-      setLoading(false);
-    }, 1000);
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const [eventsData, projectsData] = await Promise.all([
+        eventService.getAll(),
+        projectService.getAll()
+      ]);
+      setEvents(eventsData);
+      setProjects(projectsData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -93,23 +69,46 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
-  const handleAddEvent = (eventData) => {
-    const newEvent = {
-      id: events.length + 1,
-      ...eventData
-    };
-    setEvents(prev => [...prev, newEvent]);
-    console.log('New event added:', eventData);
+  const handleAddEvent = async (eventData) => {
+    try {
+      const newEvent = await eventService.create(eventData);
+      setEvents(prev => [...prev, newEvent]);
+      console.log('New event added:', newEvent);
+    } catch (error) {
+      console.error('Error adding event:', error);
+    }
   };
 
-  const handleAddProject = (projectData) => {
-    const newProject = {
-      id: projects.length + 1,
-      ...projectData,
-      status: 'Active'
-    };
-    setProjects(prev => [...prev, newProject]);
-    console.log('New project added:', projectData);
+  const handleAddProject = async (projectData) => {
+    try {
+      const newProject = await projectService.create(projectData);
+      setProjects(prev => [...prev, newProject]);
+      console.log('New project added:', newProject);
+    } catch (error) {
+      console.error('Error adding project:', error);
+    }
+  };
+
+  const handleDeleteEvent = async (id) => {
+    if (window.confirm('Are you sure you want to delete this event?')) {
+      try {
+        await eventService.delete(id);
+        setEvents(prev => prev.filter(e => e._id !== id));
+      } catch (error) {
+        console.error('Error deleting event:', error);
+      }
+    }
+  };
+
+  const handleDeleteProject = async (id) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        await projectService.delete(id);
+        setProjects(prev => prev.filter(p => p._id !== id));
+      } catch (error) {
+        console.error('Error deleting project:', error);
+      }
+    }
   };
 
   if (loading) {
@@ -391,13 +390,13 @@ const AdminDashboard = () => {
                         <CardContent>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                             <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600 }}>
-                              {event.name}
+                              {event.title}
                             </Typography>
                             <Box>
                               <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', mr: 1 }}>
                                 Edit
                               </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b' }}>
+                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b' }} onClick={() => handleDeleteEvent(event._id)}>
                                 Delete
                               </Button>
                             </Box>
@@ -410,7 +409,7 @@ const AdminDashboard = () => {
                           <Grid container spacing={1}>
                             <Grid item xs={6}>
                               <Typography variant="caption" sx={{ color: '#D4AF37' }}>
-                                📅 {event.date}
+                                📅 {new Date(event.scope.startDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -495,7 +494,7 @@ const AdminDashboard = () => {
                               <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', mr: 1 }}>
                                 Edit
                               </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b' }}>
+                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b' }} onClick={() => handleDeleteProject(project._id)}>
                                 Delete
                               </Button>
                             </Box>
@@ -508,7 +507,7 @@ const AdminDashboard = () => {
                           <Grid container spacing={1}>
                             <Grid item xs={12}>
                               <Typography variant="caption" sx={{ color: '#D4AF37' }}>
-                                📅 Scope: {project.scope}
+                                📅 Scope: {new Date(project.scope.startDate).toLocaleDateString()} - {new Date(project.scope.endDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>

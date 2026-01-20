@@ -5,6 +5,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import WhatWeDoPage from './pages/WhatWeDoPage';
+import EventsPage from './pages/EventsPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
 import ProjectsPage from './pages/ProjectsPage';
 import MilestonesPage from './pages/MilestonesPage';
 import TeamPage from './pages/TeamPage';
@@ -42,24 +44,42 @@ const theme = createTheme({
       'serif'
     ].join(','),
     h1: {
-      fontSize: '3rem',
+      fontSize: '2.5rem',
       fontWeight: 700,
       lineHeight: 1.2,
+      '@media (min-width:600px)': {
+        fontSize: '3rem',
+      },
     },
     h2: {
-      fontSize: '2.5rem',
-      fontWeight: 600,
-      lineHeight: 1.3,
-    },
-    h3: {
       fontSize: '2rem',
       fontWeight: 600,
+      lineHeight: 1.3,
+      '@media (min-width:600px)': {
+        fontSize: '2.5rem',
+      },
+    },
+    h3: {
+      fontSize: '1.75rem',
+      fontWeight: 600,
       lineHeight: 1.4,
+      '@media (min-width:600px)': {
+        fontSize: '2rem',
+      },
     },
     h4: {
-      fontSize: '1.5rem',
+      fontSize: '1.25rem',
       fontWeight: 500,
       lineHeight: 1.5,
+      '@media (min-width:600px)': {
+        fontSize: '1.5rem',
+      },
+    },
+    h5: {
+      fontSize: '1.1rem',
+      '@media (min-width:600px)': {
+        fontSize: '1.25rem',
+      },
     },
   },
   components: {
@@ -89,6 +109,8 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/what-we-do" element={<WhatWeDoPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/:id" element={<ProjectDetailPage />} />
+              <Route path="/events" element={<EventsPage />} />
               <Route path="/milestones" element={<MilestonesPage />} />
               <Route path="/team" element={<TeamPage />} />
               <Route path="/contact" element={<ContactPage />} />

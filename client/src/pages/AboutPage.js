@@ -53,7 +53,7 @@ const AboutPage = () => {
             <Paper 
               elevation={3} 
               sx={{ 
-                height: '400px', 
+                height: { xs: '250px', sm: '350px', md: '400px' }, 
                 backgroundImage: 'url(/images/LeeImage_180.jpg)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

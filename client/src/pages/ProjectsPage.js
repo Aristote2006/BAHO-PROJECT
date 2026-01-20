@@ -1,7 +1,8 @@
-import React from 'react';
-import { Container, Box, Typography, Grid, Paper, Card, CardContent, CardMedia, CardActions, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Box, Typography, Grid, Paper, Card, CardContent, CardMedia, CardActions, Button, CircularProgress, Chip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import { projectService } from '../services/apiService';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -16,51 +17,75 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
+const STATIC_PROJECTS = [
+  {
+    _id: 'static-p1',
+    title: "Baho Performing Arts",
+    description: "Showcasing African performing arts through theater, dance, and music performances. This program provides a platform for local artists to showcase their talents and connect with audiences.",
+    image: "/images/LeeImage_128_project.jpg",
+    category: "Performing Arts",
+    isStatic: true
+  },
+  {
+    _id: 'static-p2',
+    title: "Talent Gear Program",
+    description: "A comprehensive talent development program for emerging artists and creatives. The program includes mentorship, skills training, and exhibition opportunities.",
+    image: "/images/LeeImage_150.jpg",
+    category: "Education",
+    isStatic: true
+  },
+  {
+    _id: 'static-p3',
+    title: "Baho Events",
+    description: "Organizing cultural events, festivals, and exhibitions to promote African arts and culture. These events provide networking opportunities and exposure for artists.",
+    image: "/images/BAHO(28).jpg",
+    category: "Cultural Events",
+    isStatic: true
+  },
+  {
+    _id: 'static-p4',
+    title: "Heritage Preservation Initiative",
+    description: "A program focused on documenting and preserving traditional African art forms, crafts, and cultural practices for future generations.",
+    image: "/images/LeeImage_61.jpg",
+    category: "Heritage",
+    isStatic: true
+  },
+  {
+    _id: 'static-p5',
+    title: "Creative Entrepreneurship Program",
+    description: "Training and support for creative professionals to build sustainable businesses in the creative economy. Includes business development and marketing training.",
+    image: "/images/LeeImage_200.jpg",
+    category: "Entrepreneurship",
+    isStatic: true
+  },
+  {
+    _id: 'static-p6',
+    title: "Inclusive Arts Project",
+    description: "Specialized programs for artists with disabilities, refugees, and other marginalized communities, ensuring equal access to creative opportunities.",
+    image: "/images/LeeImage_38.jpg",
+    category: "Inclusion",
+    isStatic: true
+  }
+];
+
 const ProjectsPage = () => {
-  const projects = [
-    {
-      id: 1,
-      title: "Baho Performing Arts",
-      description: "Showcasing African performing arts through theater, dance, and music performances. This program provides a platform for local artists to showcase their talents and connect with audiences.",
-      image: "/images/LeeImage_128_project.jpg",
-      category: "Performing Arts"
-    },
-    {
-      id: 2,
-      title: "Talent Gear Program",
-      description: "A comprehensive talent development program for emerging artists and creatives. The program includes mentorship, skills training, and exhibition opportunities.",
-      image: "/images/LeeImage_150.jpg",
-      category: "Education"
-    },
-    {
-      id: 3,
-      title: "Baho Events",
-      description: "Organizing cultural events, festivals, and exhibitions to promote African arts and culture. These events provide networking opportunities and exposure for artists.",
-      image: "/images/BAHO(28).jpg",
-      category: "Cultural Events"
-    },
-    {
-      id: 4,
-      title: "Heritage Preservation Initiative",
-      description: "A program focused on documenting and preserving traditional African art forms, crafts, and cultural practices for future generations.",
-      image: "/images/LeeImage_61.jpg",
-      category: "Heritage"
-    },
-    {
-      id: 5,
-      title: "Creative Entrepreneurship Program",
-      description: "Training and support for creative professionals to build sustainable businesses in the creative economy. Includes business development and marketing training.",
-      image: "/images/LeeImage_200.jpg",
-      category: "Entrepreneurship"
-    },
-    {
-      id: 6,
-      title: "Inclusive Arts Project",
-      description: "Specialized programs for artists with disabilities, refugees, and other marginalized communities, ensuring equal access to creative opportunities.",
-      image: "/images/LeeImage_38.jpg",
-      category: "Inclusion"
-    }
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await projectService.getAll().catch(() => []);
+        setProjects([...data, ...STATIC_PROJECTS]);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setProjects(STATIC_PROJECTS);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   return (
     <div>
@@ -91,50 +116,65 @@ const ProjectsPage = () => {
           Current Projects
         </Typography>
         
-        <Grid container spacing={6}>
-          {projects.map((project) => (
-            <Grid item xs={12} md={6} lg={4} key={project.id}>
-              <StyledCard>
-                <CardMedia
-                  component="img"
-                  height="250"
-                  image={project.image}
-                  alt={project.title}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="overline" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} gutterBottom sx={{ color: '#D4AF37', fontWeight: 600, display: 'inline-block', pb: 1 }}>
-                    {project.category}
-                  </Typography>
-                  <Typography gutterBottom variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
-                    {project.title}
-                  </Typography>
-                  <Typography variant="body2" className="text-fade-in-up" style={{ animationDelay: '0.4s' }} sx={{ color: '#4A4A4A', lineHeight: 1.6 }}>
-                    {project.description}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
-                  <Button 
-                    size="small" 
-                    className="text-fade-in-up"
-                    style={{ animationDelay: '0.5s' }}
-                    component={Link} 
-                    to={`/projects/${project.id}`}
-                    sx={{ 
-                      color: '#01234B',
-                      borderColor: '#01234B',
-                      '&:hover': {
-                        backgroundColor: '#01234B',
-                        color: 'white',
-                      }
+        {loading ? (
+          <Box textAlign="center" py={4}><CircularProgress sx={{ color: '#D4AF37' }} /></Box>
+        ) : (
+          <Grid container spacing={6}>
+            {projects.map((project) => (
+              <Grid item xs={12} md={6} lg={4} key={project._id || project.id}>
+                <StyledCard sx={{ position: 'relative' }}>
+                  { !project.isStatic && (
+                    <Chip 
+                      label="NEW" 
+                      color="error" 
+                      size="small" 
+                      sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold' }} 
+                    />
+                  )}
+                  <CardMedia
+                    component="img"
+                    image={project.image}
+                    alt={project.title}
+                    sx={{
+                      height: { xs: 200, sm: 250 },
+                      objectFit: 'cover'
                     }}
-                  >
-                    Learn More
-                  </Button>
-                </CardActions>
-              </StyledCard>
-            </Grid>
-          ))}
-        </Grid>
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography variant="overline" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} gutterBottom sx={{ color: '#D4AF37', fontWeight: 600, display: 'inline-block', pb: 1 }}>
+                      {project.category}
+                    </Typography>
+                    <Typography gutterBottom variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
+                      {project.title}
+                    </Typography>
+                    <Typography variant="body2" className="text-fade-in-up" style={{ animationDelay: '0.4s' }} sx={{ color: '#4A4A4A', lineHeight: 1.6 }}>
+                      {project.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
+                    <Button 
+                      size="small" 
+                      className="text-fade-in-up"
+                      style={{ animationDelay: '0.5s' }}
+                      component={Link} 
+                      to={`/projects/${project._id || project.id}`}
+                      sx={{ 
+                        color: '#01234B',
+                        borderColor: '#01234B',
+                        '&:hover': {
+                          backgroundColor: '#01234B',
+                          color: 'white',
+                        }
+                      }}
+                    >
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </StyledCard>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
         {/* Project Categories */}
         <Box sx={{ mt: 10 }}>

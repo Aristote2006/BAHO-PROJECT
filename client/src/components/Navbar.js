@@ -25,6 +25,7 @@ const Navbar = () => {
     { text: 'About', path: '/about' },
     { text: 'What We Do', path: '/what-we-do' },
     { text: 'Projects', path: '/projects' },
+    { text: 'Events', path: '/events' },
     { text: 'Milestones', path: '/milestones' },
     { text: 'Team', path: '/team' },
     { text: 'Gallery', path: 'https://drive.google.com/drive/folders/1_Cd8PJavkutn-_uON063UuCmAqkaDSBN?usp=drive_link', isExternal: true },
@@ -98,24 +99,17 @@ const Navbar = () => {
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <img 
-            src="/images/BAHO_BRAND_yellow.png"
-            alt="BAHO AFRICA Logo" 
-            style={{ height: '40px', width: 'auto', marginRight: '12px' }}
-          />
-          <Typography 
-            variant="h6" 
-            component={Link} 
-            to="/"
-            sx={{ 
-              color: '#fff', 
-              textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: '1.5rem'
-            }}
-          >
-            BAHO AFRICA
-          </Typography>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <Box
+              component="img"
+              src="/images/BAHO_BRAND_yellow.png"
+              alt="BAHO AFRICA Logo"
+              sx={{
+                height: { xs: '50px', sm: '70px' },
+                width: 'auto'
+              }}
+            />
+          </Link>
         </Box>
         
         {/* Desktop Navigation */}

@@ -74,9 +74,12 @@ const WhatWeDoPage = () => {
               <StyledCard>
                 <CardMedia
                   component="img"
-                  height="250"
                   image={service.image}
                   alt={service.title}
+                  sx={{
+                    height: { xs: 200, sm: 250 },
+                    objectFit: 'cover'
+                  }}
                 />
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography gutterBottom variant="h4" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
