@@ -131,7 +131,7 @@ const ContactPage = () => {
                   Address
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#4A4A4A' }}>
-                  Northern Province, Musanze, Rwanda
+                  IKORO Resort, Musanze, Northern Province, Rwanda
                 </Typography>
               </Box>
               
@@ -175,14 +175,14 @@ const ContactPage = () => {
                 </Typography>
                 <Box
                   component="iframe"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.3294464566!2d29.63494531474865!3d-1.504917435982536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca5c8b42c7f6b%3A0x20a7f0d5c6c5e4a0!2sMusanze%2C%20Rwanda!5e0!3m2!1sen!2s!4v1650000000000!5m2!1sen!2s"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.2734449986736!2d29.631461!3d-1.498889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dc5b43085167a9%3A0xcbb88cb89e9639f8!2sIKORO%20Resort%20Musanze!5e0!3m2!1sen!2srw!4v1234567890123!5m2!1sen!2srw"
                   width="100%"
                   height="300"
-                  style={{ border: 0, borderRadius: 2 }}
+                  style={{ border: 0, borderRadius: 8 }}
                   allowFullScreen=""
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="BAHO AFRICA Location"
+                  title="IKORO Resort Musanze Location"
                 />
               </Box>
             </StyledPaper>

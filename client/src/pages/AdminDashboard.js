@@ -38,8 +38,28 @@ const AdminDashboard = () => {
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
+  const [recentActivity, setRecentActivity] = useState([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Calculate statistics
+  const getThisMonthCount = () => {
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    
+    const eventsThisMonth = events.filter(event => {
+      const eventDate = new Date(event.createdAt || event.scope?.startDate);
+      return eventDate.getMonth() === thisMonth && eventDate.getFullYear() === thisYear;
+    }).length;
+    
+    const projectsThisMonth = projects.filter(project => {
+      const projectDate = new Date(project.createdAt || project.scope?.startDate);
+      return projectDate.getMonth() === thisMonth && projectDate.getFullYear() === thisYear;
+    }).length;
+    
+    return eventsThisMonth + projectsThisMonth;
+  };
 
   useEffect(() => {
     fetchData();
@@ -53,6 +73,35 @@ const AdminDashboard = () => {
       ]);
       setEvents(eventsData);
       setProjects(projectsData);
+      
+      // Build recent activity from events and projects
+      const activity = [];
+      
+      // Add recent events
+      eventsData.slice(0, 3).forEach(event => {
+        activity.push({
+          type: 'event',
+          action: 'added',
+          title: event.title,
+          timestamp: event.createdAt || event.scope?.startDate,
+          id: event._id
+        });
+      });
+      
+      // Add recent projects
+      projectsData.slice(0, 3).forEach(project => {
+        activity.push({
+          type: 'project',
+          action: 'added',
+          title: project.title,
+          timestamp: project.createdAt || project.scope?.startDate,
+          id: project._id
+        });
+      });
+      
+      // Sort by timestamp and take most recent 5
+      activity.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      setRecentActivity(activity.slice(0, 5));
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -69,10 +118,39 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
+  // Helper function to format time ago
+  const getTimeAgo = (timestamp) => {
+    if (!timestamp) return 'recently';
+    
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
+    return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? 's' : ''} ago`;
+  };
+
   const handleAddEvent = async (eventData) => {
     try {
       const newEvent = await eventService.create(eventData);
-      setEvents(prev => [...prev, newEvent]);
+      setEvents(prev => [newEvent, ...prev]);
+      
+      // Add to recent activity
+      setRecentActivity(prev => [{
+        type: 'event',
+        action: 'added',
+        title: newEvent.title,
+        timestamp: new Date().toISOString(),
+        id: newEvent._id
+      }, ...prev].slice(0, 5));
+      
       console.log('New event added:', newEvent);
     } catch (error) {
       console.error('Error adding event:', error);
@@ -82,7 +160,17 @@ const AdminDashboard = () => {
   const handleAddProject = async (projectData) => {
     try {
       const newProject = await projectService.create(projectData);
-      setProjects(prev => [...prev, newProject]);
+      setProjects(prev => [newProject, ...prev]);
+      
+      // Add to recent activity
+      setRecentActivity(prev => [{
+        type: 'project',
+        action: 'added',
+        title: newProject.title,
+        timestamp: new Date().toISOString(),
+        id: newProject._id
+      }, ...prev].slice(0, 5));
+      
       console.log('New project added:', newProject);
     } catch (error) {
       console.error('Error adding project:', error);
@@ -94,6 +182,7 @@ const AdminDashboard = () => {
       try {
         await eventService.delete(id);
         setEvents(prev => prev.filter(e => e._id !== id));
+        setRecentActivity(prev => prev.filter(item => !(item.type === 'event' && item.id === id)));
       } catch (error) {
         console.error('Error deleting event:', error);
       }
@@ -105,6 +194,7 @@ const AdminDashboard = () => {
       try {
         await projectService.delete(id);
         setProjects(prev => prev.filter(p => p._id !== id));
+        setRecentActivity(prev => prev.filter(item => !(item.type === 'project' && item.id === id)));
       } catch (error) {
         console.error('Error deleting project:', error);
       }
@@ -172,19 +262,28 @@ const AdminDashboard = () => {
             gap: { xs: 1, sm: 3 },
             minWidth: 0
           }}>
-            <Chip 
-              avatar={<Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>{user?.firstName?.charAt(0)}</Avatar>}
-              label={`${user?.firstName} ${user?.lastName}`}
-              sx={{ 
-                backgroundColor: 'rgba(212, 175, 55, 0.2)',
-                color: '#D4AF37',
-                fontWeight: 600,
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                maxWidth: { xs: 120, sm: 'unset' },
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Avatar 
+                sx={{ 
+                  width: { xs: 32, sm: 40 }, 
+                  height: { xs: 32, sm: 40 },
+                  bgcolor: '#D4AF37',
+                  color: '#01234B',
+                  fontWeight: 700,
+                  fontSize: { xs: '1rem', sm: '1.25rem' }
+                }}
+              >
+                {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+              </Avatar>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Typography variant="body2" sx={{ color: '#D4AF37', fontWeight: 600, lineHeight: 1.2 }}>
+                  {user?.firstName} {user?.lastName}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'rgba(212, 175, 55, 0.7)', lineHeight: 1 }}>
+                  {user?.email}
+                </Typography>
+              </Box>
+            </Box>
             <Button 
               variant="outlined" 
               onClick={handleLogout}
@@ -219,7 +318,7 @@ const AdminDashboard = () => {
       >
         {/* Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ 
               background: 'linear-gradient(45deg, #0a3666, #415A77)',
               color: 'white',
@@ -243,7 +342,7 @@ const AdminDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ 
               background: 'linear-gradient(45deg, #0a3666, #415A77)',
               color: 'white',
@@ -267,7 +366,7 @@ const AdminDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ 
               background: 'linear-gradient(45deg, #0a3666, #415A77)',
               color: 'white',
@@ -282,34 +381,10 @@ const AdminDashboard = () => {
               <CardContent sx={{ textAlign: 'center', py: 3 }}>
                 <AddIcon sx={{ fontSize: 48, color: '#D4AF37', mb: 2 }} />
                 <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                  12
+                  {getThisMonthCount()}
                 </Typography>
                 <Typography variant="h6" sx={{ color: '#D4AF37' }}>
                   New This Month
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              background: 'linear-gradient(45deg, #0a3666, #415A77)',
-              color: 'white',
-              height: '100%',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-5px)'
-              }
-            }}>
-              <CardContent sx={{ textAlign: 'center', py: 3 }}>
-                <EditIcon sx={{ fontSize: 48, color: '#D4AF37', mb: 2 }} />
-                <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                  8
-                </Typography>
-                <Typography variant="h6" sx={{ color: '#D4AF37' }}>
-                  Pending Updates
                 </Typography>
               </CardContent>
             </Card>
@@ -540,25 +615,45 @@ const AdminDashboard = () => {
                   Recent Activity
                 </Typography>
                 
-                <Card sx={{ 
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(212, 175, 55, 0.2)'
-                }}>
-                  <CardContent>
-                    <Typography variant="body1" sx={{ color: '#ccc' }}>
-                      • New event "BAHO Cultural Festival" added - 2 hours ago
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#ccc', mt: 1 }}>
-                      • Project "Community Art Program" updated - 1 day ago
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#ccc', mt: 1 }}>
-                      • User NDATIMANA FABRICE logged in - 3 days ago
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#ccc', mt: 1 }}>
-                      • New project "Digital Heritage Archive" created - 1 week ago
-                    </Typography>
-                  </CardContent>
-                </Card>
+                {recentActivity.length > 0 ? (
+                  <Card sx={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(212, 175, 55, 0.2)'
+                  }}>
+                    <CardContent>
+                      {recentActivity.map((activity, index) => {
+                        const timeAgo = getTimeAgo(activity.timestamp);
+                        const icon = activity.type === 'event' ? '📅' : '📁';
+                        
+                        return (
+                          <Typography 
+                            key={index} 
+                            variant="body1" 
+                            sx={{ 
+                              color: '#ccc', 
+                              mt: index > 0 ? 2 : 0,
+                              pb: index < recentActivity.length - 1 ? 2 : 0,
+                              borderBottom: index < recentActivity.length - 1 ? '1px solid rgba(212, 175, 55, 0.1)' : 'none'
+                            }}
+                          >
+                            {icon} New {activity.type} "{activity.title}" {activity.action} - {timeAgo}
+                          </Typography>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card sx={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(212, 175, 55, 0.2)'
+                  }}>
+                    <CardContent>
+                      <Typography variant="body1" sx={{ color: '#ccc', textAlign: 'center', py: 4 }}>
+                        No recent activity. Start by creating your first event or project!
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
               </Box>
             )}
           </Box>

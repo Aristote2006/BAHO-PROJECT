@@ -20,7 +20,7 @@ const WhatWeDoPage = () => {
     {
       title: "Creative & Performing Arts",
       description: "We provide platforms for artists to showcase their talents through performances, exhibitions, and cultural events. Our programs include theater, music, dance, visual arts, and storytelling initiatives.",
-      image: "/images/JKP_2677.JPG"
+      image: "/images/creativearts.jpeg"
     },
     {
       title: "Cultural Heritage & Innovation",

@@ -3,6 +3,7 @@ import { Container, Box, Typography, Grid, Paper, Card, CardContent, CardMedia, 
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { projectService } from '../services/apiService';
+import { STATIC_PROJECTS } from '../constants/staticData';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -16,57 +17,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
     boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
   },
 }));
-
-const STATIC_PROJECTS = [
-  {
-    _id: 'static-p1',
-    title: "Baho Performing Arts",
-    description: "Showcasing African performing arts through theater, dance, and music performances. This program provides a platform for local artists to showcase their talents and connect with audiences.",
-    image: "/images/LeeImage_128_project.jpg",
-    category: "Performing Arts",
-    isStatic: true
-  },
-  {
-    _id: 'static-p2',
-    title: "Talent Gear Program",
-    description: "A comprehensive talent development program for emerging artists and creatives. The program includes mentorship, skills training, and exhibition opportunities.",
-    image: "/images/LeeImage_150.jpg",
-    category: "Education",
-    isStatic: true
-  },
-  {
-    _id: 'static-p3',
-    title: "Baho Events",
-    description: "Organizing cultural events, festivals, and exhibitions to promote African arts and culture. These events provide networking opportunities and exposure for artists.",
-    image: "/images/BAHO(28).jpg",
-    category: "Cultural Events",
-    isStatic: true
-  },
-  {
-    _id: 'static-p4',
-    title: "Heritage Preservation Initiative",
-    description: "A program focused on documenting and preserving traditional African art forms, crafts, and cultural practices for future generations.",
-    image: "/images/LeeImage_61.jpg",
-    category: "Heritage",
-    isStatic: true
-  },
-  {
-    _id: 'static-p5',
-    title: "Creative Entrepreneurship Program",
-    description: "Training and support for creative professionals to build sustainable businesses in the creative economy. Includes business development and marketing training.",
-    image: "/images/LeeImage_200.jpg",
-    category: "Entrepreneurship",
-    isStatic: true
-  },
-  {
-    _id: 'static-p6',
-    title: "Inclusive Arts Project",
-    description: "Specialized programs for artists with disabilities, refugees, and other marginalized communities, ensuring equal access to creative opportunities.",
-    image: "/images/LeeImage_38.jpg",
-    category: "Inclusion",
-    isStatic: true
-  }
-];
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);

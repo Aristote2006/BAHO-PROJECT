@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box, Typography, Grid, Card, CardContent, CardMedia, Avatar, Zoom } from '@mui/material';
+import { Container, Box, Typography, Grid, Card, CardContent, CardMedia, Avatar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Lightbulb, People, Star } from '@mui/icons-material';
 
@@ -34,11 +34,15 @@ const ImageContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 280,
   [theme.breakpoints.up('sm')]: {
+    height: 320,
+  },
+  [theme.breakpoints.up('md')]: {
     height: 350,
   },
   overflow: 'hidden',
   position: 'relative',
   borderRadius: '24px 24px 0 0',
+  backgroundColor: '#f5f5f5',
 }));
 
 const ValueCard = styled(Card)(({ theme }) => ({
@@ -186,8 +190,11 @@ const TeamPage = () => {
                     sx={{ 
                       height: '100%', 
                       width: '100%', 
-                      objectFit: 'cover',
-                      transition: 'transform 0.8s ease'
+                      objectFit: 'contain',
+                      objectPosition: 'center top',
+                      transition: 'transform 0.8s ease',
+                      backgroundColor: '#f5f5f5',
+                      padding: { xs: 1, sm: 2 }
                     }}
                   />
                   <Box 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Box, Typography, Paper, Grid, Card, CardContent } from '@mui/material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent, TimelineOppositeContent } from '@mui/lab';
 import { styled } from '@mui/material/styles';
@@ -8,6 +8,62 @@ const StyledTimelineDot = styled(TimelineDot)(({ theme }) => ({
   width: '24px',
   height: '24px',
 }));
+
+// Counter Animation Component
+const AnimatedCounter = ({ end, duration = 2000, suffix = '' }) => {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const counterRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          let startTime;
+          const startValue = 0;
+          const endValue = end;
+
+          const animate = (currentTime) => {
+            if (!startTime) startTime = currentTime;
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            
+            // Easing function for smooth animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const currentCount = Math.floor(easeOutQuart * (endValue - startValue) + startValue);
+            
+            setCount(currentCount);
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              setCount(endValue);
+            }
+          };
+
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (counterRef.current) {
+      observer.observe(counterRef.current);
+    }
+
+    return () => {
+      if (counterRef.current) {
+        observer.unobserve(counterRef.current);
+      }
+    };
+  }, [end, duration, hasAnimated]);
+
+  return (
+    <span ref={counterRef}>
+      {count.toLocaleString()}{suffix}
+    </span>
+  );
+};
 
 const MilestonesPage = () => {
   const milestones = [
@@ -24,7 +80,7 @@ const MilestonesPage = () => {
       year: '2024',
       events: [
         { date: 'February 2024', title: 'Talent Gear Program Launch', description: 'Launched the comprehensive talent development program for emerging artists and creatives.' },
-        { date: 'May 2024', title: 'Baho Performing Arts Festival', description: 'Hosted the first annual performing arts festival featuring 50+ artists from across East Africa.' },
+        { date: 'May 2024', title: 'Baho Africa Connect', description: 'Hosted the first annual performing arts festival featuring 50+ artists from across East Africa.' },
         { date: 'August 2024', title: 'Inclusive Arts Initiative', description: 'Started specialized programs for artists with disabilities and refugees, ensuring equal access to creative opportunities.' },
         { date: 'November 2024', title: 'Creative Entrepreneurship Workshop', description: 'Organized a 3-month workshop series for 30+ creative professionals on building sustainable businesses.' }
       ]
@@ -126,7 +182,7 @@ const MilestonesPage = () => {
               <Card elevation={3} sx={{ borderRadius: 2, py: 4, backgroundColor: 'white', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                 <CardContent>
                   <Typography variant="h2" component="div" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ color: '#D4AF37', fontWeight: 700 }}>
-                    127+
+                    <AnimatedCounter end={127} suffix="+" />
                   </Typography>
                   <Typography variant="h6" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
                     Artists Empowered
@@ -138,7 +194,7 @@ const MilestonesPage = () => {
               <Card elevation={3} sx={{ borderRadius: 2, py: 4, backgroundColor: 'white', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                 <CardContent>
                   <Typography variant="h2" component="div" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ color: '#D4AF37', fontWeight: 700 }}>
-                    32+
+                    <AnimatedCounter end={32} suffix="+" />
                   </Typography>
                   <Typography variant="h6" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
                     Events Organized
@@ -150,7 +206,7 @@ const MilestonesPage = () => {
               <Card elevation={3} sx={{ borderRadius: 2, py: 4, backgroundColor: 'white', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                 <CardContent>
                   <Typography variant="h2" component="div" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ color: '#D4AF37', fontWeight: 700 }}>
-                    17000+
+                    <AnimatedCounter end={17000} suffix="+" />
                   </Typography>
                   <Typography variant="h6" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
                     Communities Reached
@@ -162,7 +218,7 @@ const MilestonesPage = () => {
               <Card elevation={3} sx={{ borderRadius: 2, py: 4, backgroundColor: 'white', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                 <CardContent>
                   <Typography variant="h2" component="div" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} sx={{ color: '#D4AF37', fontWeight: 700 }}>
-                    500+
+                    <AnimatedCounter end={500} suffix="+" />
                   </Typography>
                   <Typography variant="h6" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ color: '#01234B', fontWeight: 600 }}>
                     Lives Impacted

@@ -39,6 +39,10 @@ const Navbar = () => {
       { text: 'Register', path: '/register' }
     );
   } else {
+    // If user is authenticated and admin, show Dashboard link
+    if (user?.isAdmin) {
+      navItems.push({ text: 'Dashboard', path: '/admin' });
+    }
     navItems.push({ text: `Welcome, ${user?.firstName}`, path: '/profile' });
     navItems.push({ text: 'Logout', path: '#', onClick: handleLogout });
   };

@@ -1,17 +1,15 @@
-// To add local images:
-// 1. Place images in /public/images/ for direct access (use as '/images/filename.jpg')
-// 2. Place images in /src/assets/images/ to import (import image from '../assets/images/filename.jpg')
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Button, Grid, Paper, Slide, Card, CardContent, CardMedia, Chip, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { ArrowForward, CalendarToday, LocationOn, AccessTime } from '@mui/icons-material';
 import { eventService, projectService } from '../services/apiService';
+import { STATIC_PROJECTS, STATIC_EVENTS } from '../constants/staticData';
 
 const HeroSection = styled(Box)(({ theme }) => ({
   height: '70vh',
-  [theme.breakpoints.up('md')]: {
-    height: '90vh',
+  [theme.breakpoints.down('sm')]: {
+    height: '50vh',
   },
   display: 'flex',
   alignItems: 'center',
@@ -40,8 +38,9 @@ const SlideshowImage = styled(Box)(({ src }) => ({
   height: '100%',
   backgroundImage: `url(${src})`,
   backgroundSize: 'cover',
-  backgroundPosition: 'center',
+  backgroundPosition: 'center 30%',
   backgroundRepeat: 'no-repeat',
+  backgroundColor: '#01234B',
 }));
 
 const AnimatedText = styled('span')(({ theme }) => ({
@@ -61,66 +60,6 @@ const HeroOverlay = styled(Box)({
   zIndex: 2.5,
 });
 
-const STATIC_PROJECTS = [
-  {
-    _id: 'static-p1',
-    title: "Baho Performing Arts",
-    description: "Showcasing African performing arts through theater, dance, and music performances.",
-    image: "/images/JKP_2677.JPG",
-    category: "Performing Arts",
-    isStatic: true
-  },
-  {
-    _id: 'static-p2',
-    title: "Talent Gear Program",
-    description: "A comprehensive talent development program for emerging artists and creatives.",
-    image: "/images/Baho-Night-1-_8.JPG",
-    category: "Education",
-    isStatic: true
-  },
-  {
-    _id: 'static-p3',
-    title: "Baho Events",
-    description: "Organizing cultural events, festivals, and exhibitions to promote African arts and culture.",
-    image: "/images/JKP_2692.JPG",
-    category: "Cultural Events",
-    isStatic: true
-  }
-];
-
-const STATIC_EVENTS = [
-  {
-    _id: 'static-e1',
-    title: "Annual Cultural Festival",
-    description: "Join us for our biggest celebration of the year featuring traditional music, dance, and art from across Africa.",
-    scope: { startDate: "2024-03-15" },
-    location: "Kigali Convention Center",
-    category: "Festival",
-    image: "/images/BAHO(55).jpg",
-    isStatic: true
-  },
-  {
-    _id: 'static-e2',
-    title: "Youth Art Exhibition",
-    description: "Showcasing talented young artists from Rwanda and neighboring countries.",
-    scope: { startDate: "2024-03-22" },
-    location: "National Gallery",
-    category: "Exhibition",
-    image: "/images/LeeImage_100.jpg",
-    isStatic: true
-  },
-  {
-    _id: 'static-e3',
-    title: "Music Workshop Series",
-    description: "Learn from renowned African musicians and producers in this intensive workshop series.",
-    scope: { startDate: "2024-04-05" },
-    location: "BAHO Creative Hub",
-    category: "Workshop",
-    image: "/images/JKP_2677.JPG",
-    isStatic: true
-  }
-];
-
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [displayEvents, setDisplayEvents] = useState([]);
@@ -128,11 +67,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   
   const heroImages = [
-    '/images/Baho-Night-1-_6.JPG',
-    '/images/Baho-Night-1-_3.JPG',
-    '/images/LeeImage_140.jpg',
-    '/images/WhatsApp Image 2025-02-25 at 10.37.04 PM (1).jpeg',
-    '/images/LeeImage_120.jpg'
+    '/images/home4.jpeg'
   ];
   
   useEffect(() => {
@@ -161,7 +96,7 @@ const HomePage = () => {
 
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 6000); // Reset to 6000ms for optimal smooth fade transitions
+    }, 5000); // 5 seconds per slide for smooth transitions
     
     return () => clearInterval(interval);
   }, [heroImages.length]);
@@ -376,7 +311,7 @@ const HomePage = () => {
                   component="img" 
                   className="text-fade-in-up"
                   style={{ animationDelay: '0.2s' }}
-                  src="/images/LeeImage_35.jpg" // Using your local image
+                  src="/images/creativearts.jpeg" // Using your local image
                   alt="Creative & Performing Arts" 
                   sx={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 2, mb: 2 }}
                 />
@@ -409,7 +344,7 @@ const HomePage = () => {
                   component="img" 
                   className="text-fade-in-up"
                   style={{ animationDelay: '0.2s' }}
-                  src="/images/LeeImage_65.jpg" // Using your local image
+                  src="/images/cultureheritage.jpeg" // Using your local image
                   alt="Cultural Heritage & Innovation" 
                   sx={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 2, mb: 2 }}
                 />
@@ -442,7 +377,7 @@ const HomePage = () => {
                   component="img" 
                   className="text-fade-in-up"
                   style={{ animationDelay: '0.2s' }}
-                  src="/images/LeeImage_95.jpg" // Using your local image
+                  src="/images/education.jpeg" // Using your local image
                   alt="Education & Capacity Building" 
                   sx={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 2, mb: 2 }}
                 />
@@ -502,7 +437,13 @@ const HomePage = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: '#666' }}>
                         <CalendarToday sx={{ fontSize: '1rem' }} />
                         <Typography variant="body2">
-                          {event.scope?.startDate ? new Date(event.scope.startDate).toLocaleDateString() : 'Date TBD'}
+                          {event.scope?.startDate ? (typeof event.scope.startDate === 'string' && event.scope.startDate.includes('Soon') ? event.scope.startDate : new Date(event.scope.startDate).toLocaleDateString()) : 'Date TBD'}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: '#666' }}>
+                        <LocationOn sx={{ fontSize: '1rem' }} />
+                        <Typography variant="body2">
+                          {event.location}
                         </Typography>
                       </Box>
                       <Typography variant="body2" sx={{ color: '#4A4A4A' }}>

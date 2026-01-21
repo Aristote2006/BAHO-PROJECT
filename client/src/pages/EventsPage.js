@@ -3,6 +3,7 @@ import { Container, Box, Typography, Grid, Card, CardContent, CardMedia, Button,
 import { styled } from '@mui/material/styles';
 import { CalendarToday, LocationOn, AccessTime } from '@mui/icons-material';
 import { eventService } from '../services/apiService';
+import { STATIC_EVENTS } from '../constants/staticData';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -39,57 +40,6 @@ const ImageContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   borderRadius: '24px 24px 0 0',
 }));
-
-const STATIC_EVENTS = [
-  {
-    _id: 'static-e1',
-    title: "Annual Cultural Festival",
-    description: "Join us for our biggest celebration of the year featuring traditional music, dance, and art from across Africa.",
-    scope: { startDate: "2024-03-15" },
-    time: "18:00",
-    location: "Kigali Convention Center",
-    category: "Festival",
-    image: "/images/BAHO(55).jpg",
-    isStatic: true,
-    featured: true
-  },
-  {
-    _id: 'static-e2',
-    title: "Youth Art Exhibition",
-    description: "Showcasing talented young artists from Rwanda and neighboring countries.",
-    scope: { startDate: "2024-03-22" },
-    time: "10:00",
-    location: "National Gallery",
-    category: "Exhibition",
-    image: "/images/LeeImage_100.jpg",
-    isStatic: true,
-    featured: true
-  },
-  {
-    _id: 'static-e3',
-    title: "Music Workshop Series",
-    description: "Learn from renowned African musicians and producers in this intensive workshop series.",
-    scope: { startDate: "2024-04-05" },
-    time: "09:00",
-    location: "BAHO Creative Hub",
-    category: "Workshop",
-    image: "/images/JKP_2677.JPG",
-    isStatic: true,
-    featured: true
-  },
-  {
-    _id: 'static-e4',
-    title: "Heritage Storytelling Night",
-    description: "Traditional storytellers share ancient tales and wisdom from African cultures.",
-    scope: { startDate: "2024-04-12" },
-    time: "19:00",
-    location: "Community Center",
-    category: "Cultural",
-    image: "/images/LeeImage_180.jpg",
-    isStatic: true,
-    featured: false
-  }
-];
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);

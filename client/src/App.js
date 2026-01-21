@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import HomePage from './pages/HomePage';
@@ -18,6 +18,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Define the theme with dark-blue minimalist business colors
 const theme = createTheme({
@@ -96,33 +97,61 @@ const theme = createTheme({
   },
 });
 
+// Component to conditionally render Navbar based on route
+const ConditionalNavbar = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname === '/admin';
+  
+  // Don't render Navbar on admin dashboard
+  if (isAdminRoute) {
+    return null;
+  }
+  
+  return <Navbar />;
+};
+
+// Component to conditionally render Footer based on route
+const ConditionalFooter = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname === '/admin';
+  
+  // Don't render Footer on admin dashboard
+  if (isAdminRoute) {
+    return null;
+  }
+  
+  return <Footer />;
+};
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <Navbar />
-          <div style={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/what-we-do" element={<WhatWeDoPage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/projects/:id" element={<ProjectDetailPage />} />
-              <Route path="/events" element={<EventsPage />} />
-              <Route path="/milestones" element={<MilestonesPage />} />
-              <Route path="/team" element={<TeamPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            </Routes>
+      <AuthProvider>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <ConditionalNavbar />
+            <div style={{ flex: 1 }}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/what-we-do" element={<WhatWeDoPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/projects/:id" element={<ProjectDetailPage />} />
+                <Route path="/events" element={<EventsPage />} />
+                <Route path="/milestones" element={<MilestonesPage />} />
+                <Route path="/team" element={<TeamPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              </Routes>
+            </div>
+            <ConditionalFooter />
           </div>
-          <Footer />
-        </div>
-      </Router>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
