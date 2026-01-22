@@ -56,6 +56,16 @@ app.get('/api/health/auth', (req, res) => {
   });
 });
 
+// Add a middleware to log API requests for debugging
+app.use('/api/*', (req, res, next) => {
+  console.log(`API Request: ${req.method} ${req.path}`);
+  console.log(`Headers:`, req.headers);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log(`Body:`, req.body);
+  }
+  next();
+});
+
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
@@ -64,7 +74,12 @@ if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     // Ensure API routes are not caught by this handler
     if (req.originalUrl.startsWith('/api/')) {
-      res.status(404).json({ error: 'API endpoint not found' });
+      // If we get here, it means an API route wasn't matched earlier
+      res.status(404).json({ 
+        error: 'API endpoint not found',
+        path: req.originalUrl,
+        message: 'Make sure your API route is defined before the static file handler'
+      });
     } else {
       res.sendFile(path.join(__dirname, '../client/build/index.html'));
     }
@@ -111,9 +126,11 @@ app.use((err, req, res, next) => {
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
+  console.log(`API 404: ${req.method} ${req.path}`);
   res.status(404).json({ 
     message: 'API endpoint not found',
-    path: req.originalUrl
+    path: req.originalUrl,
+    method: req.method
   });
 });
 

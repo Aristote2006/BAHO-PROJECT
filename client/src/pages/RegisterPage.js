@@ -97,8 +97,13 @@ const RegisterPage = () => {
         // Case 3: Something else - try to extract what we can
         else {
           console.warn('Unexpected response structure:', data);
+          // Check if this is an empty/invalid response
+          if (data.message === "" && data.contentType === null && data.rawText === "") {
+            console.error('Received empty/invalid response from server');
+            throw new Error('Server returned an empty response. This usually means the API endpoint is not accessible or the backend server is not running. Please check that your backend server is running and accessible.');
+          }
           // If there's rawText in the response, it might contain error info
-          if (data.rawText) {
+          if (data.rawText && data.rawText.trim()) {
             console.error('Raw response text:', data.rawText);
             throw new Error('Server returned an unexpected response format. Raw response: ' + data.rawText.substring(0, 200));
           }

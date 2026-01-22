@@ -6,11 +6,13 @@ const router = express.Router();
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
+    console.log('Register request received:', req.body);
     const { firstName, lastName, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log('Registration failed: User already exists with email:', email);
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
@@ -27,6 +29,7 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
+    console.log('User created successfully:', user._id);
 
     // Generate JWT token
     const token = jwt.sign(
@@ -55,17 +58,20 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   try {
+    console.log('Login request received:', req.body.email); // Only log email, not password
     const { email, password } = req.body;
 
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('Login failed: Invalid credentials for email:', email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      console.log('Login failed: Invalid password for email:', email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
@@ -76,6 +82,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    console.log('Login successful for user:', user._id);
     res.json({
       message: 'Login successful',
       token,

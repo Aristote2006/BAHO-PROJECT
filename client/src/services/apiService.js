@@ -12,19 +12,47 @@ const safeJsonParse = async (response) => {
     try {
       const data = await response.json();
       console.log('Successfully parsed JSON response:', data);
+      
+      // Check if response is empty/invalid
+      if (response.status >= 400 || 
+          (!data.user && !data.token && data.message === "" && data.contentType === null)) {
+        console.warn('Received invalid or empty response:', data);
+        // Try to get the raw text anyway to see what's actually returned
+        const rawText = await response.text().catch(() => '');
+        return { 
+          message: 'Invalid response received', 
+          contentType: contentType, 
+          rawText: rawText || 'No content',
+          status: response.status,
+          statusText: response.statusText
+        };
+      }
+      
       return data;
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       // Return text content if JSON parsing fails
-      const text = await response.text();
+      const text = await response.text().catch(() => 'Unable to read response text');
       console.log('Raw response text:', text);
-      return { message: `Parse error: ${text.substring(0, 200)}`, error: parseError.message, rawText: text };
+      return { 
+        message: `Parse error: ${text.substring(0, 200)}`, 
+        error: parseError.message, 
+        rawText: text,
+        status: response.status,
+        statusText: response.statusText
+      };
     }
   } else {
     // If not JSON, return text content
-    const text = await response.text();
+    const text = await response.text().catch(() => 'Unable to read response text');
     console.log('Non-JSON response text:', text);
-    return { message: text.substring(0, 500), contentType: contentType, rawText: text };
+    return { 
+      message: text.substring(0, 500), 
+      contentType: contentType, 
+      rawText: text,
+      status: response.status,
+      statusText: response.statusText
+    };
   }
 };
 

@@ -104,10 +104,15 @@ export const AuthProvider = ({ children }) => {
       } else {
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
-          data = await response.json();
+          try {
+            data = await response.json();
+          } catch (parseError) {
+            const text = await response.text().catch(() => 'Unable to read response text');
+            data = { message: text.substring(0, 200), contentType: contentType, rawText: text, status: response.status, statusText: response.statusText };
+          }
         } else {
-          const text = await response.text();
-          data = { message: text.substring(0, 200), contentType: contentType, rawText: text };
+          const text = await response.text().catch(() => 'Unable to read response text');
+          data = { message: text.substring(0, 200), contentType: contentType, rawText: text, status: response.status, statusText: response.statusText };
         }
       }
 
@@ -155,10 +160,15 @@ export const AuthProvider = ({ children }) => {
       } else {
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
-          data = await response.json();
+          try {
+            data = await response.json();
+          } catch (parseError) {
+            const text = await response.text().catch(() => 'Unable to read response text');
+            data = { message: text.substring(0, 200), contentType: contentType, rawText: text, status: response.status, statusText: response.statusText };
+          }
         } else {
-          const text = await response.text();
-          data = { message: text.substring(0, 200), contentType: contentType, rawText: text };
+          const text = await response.text().catch(() => 'Unable to read response text');
+          data = { message: text.substring(0, 200), contentType: contentType, rawText: text, status: response.status, statusText: response.statusText };
         }
       }
 
