@@ -13,8 +13,8 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
+    setLoading(true);
     
     try {
       const response = await authService.login({ email, password });
@@ -33,7 +33,7 @@ const LoginPage = () => {
       } else {
         const text = await response.text();
         console.error('Non-JSON response:', text);
-        throw new Error(`Server returned ${response.status}: ${text || 'Unknown error'}`);
+        throw new Error(`Server returned ${response.status}: ${text.substring(0, 200) || 'Unknown error'}`);
       }
       
       if (response.ok) {
@@ -49,7 +49,7 @@ const LoginPage = () => {
           navigate('/');
         }
       } else {
-        setError(data.message || `Login failed (${response.status})`);
+        setError(data.message || `Login failed (${response.status}): ${data.error || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Login error details:', err);

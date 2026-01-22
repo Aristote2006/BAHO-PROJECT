@@ -16,21 +16,26 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
     
     if (password !== confirmPassword) {
-      setError("Passwords don't match!");
+      setError('Passwords do not match');
+      setLoading(false);
       return;
     }
     
-    setLoading(true);
-    setError('');
-    
     try {
-      const response = await authService.register({ firstName, lastName, email, password });
+      const response = await authService.register({ 
+        firstName, 
+        lastName, 
+        email, 
+        password 
+      });
       
       // Log response for debugging
-      console.log('Registration response status:', response.status);
-      console.log('Registration response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('Register response status:', response.status);
+      console.log('Register response headers:', Object.fromEntries(response.headers.entries()));
       
       let data;
       const contentType = response.headers.get("content-type");
@@ -38,11 +43,11 @@ const RegisterPage = () => {
       
       if (contentType && contentType.indexOf("application/json") !== -1) {
         data = await response.json();
-        console.log('Registration response data:', data);
+        console.log('Register response data:', data);
       } else {
         const text = await response.text();
         console.error('Non-JSON response:', text);
-        throw new Error(`Server returned ${response.status}: ${text || 'Unknown error'}`);
+        throw new Error(`Server returned ${response.status}: ${text.substring(0, 200) || 'Unknown error'}`);
       }
       
       if (response.ok) {
@@ -50,19 +55,14 @@ const RegisterPage = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Redirect based on user role
-        if (data.user.isAdmin) {
-          navigate('/admin');
-        } else {
-          // Regular users go to home page
-          navigate('/');
-        }
+        // Redirect to admin dashboard (all users are admins)
+        navigate('/admin');
       } else {
-        setError(data.message || `Registration failed (${response.status})`);
+        setError(data.message || `Registration failed (${response.status}): ${data.error || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Registration error details:', err);
-      setError(err.message || 'An error occurred. Please try again.');
+      setError(err.message || 'An error occurred during registration. Please try again.');
     } finally {
       setLoading(false);
     }
