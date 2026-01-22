@@ -48,6 +48,7 @@ const theme = createTheme({
       fontSize: '2.5rem',
       fontWeight: 700,
       lineHeight: 1.2,
+      color: '#01234B',
       '@media (min-width:600px)': {
         fontSize: '3rem',
       },
@@ -56,6 +57,7 @@ const theme = createTheme({
       fontSize: '2rem',
       fontWeight: 600,
       lineHeight: 1.3,
+      color: '#01234B',
       '@media (min-width:600px)': {
         fontSize: '2.5rem',
       },
@@ -64,6 +66,7 @@ const theme = createTheme({
       fontSize: '1.75rem',
       fontWeight: 600,
       lineHeight: 1.4,
+      color: '#01234B',
       '@media (min-width:600px)': {
         fontSize: '2rem',
       },
@@ -72,15 +75,23 @@ const theme = createTheme({
       fontSize: '1.25rem',
       fontWeight: 500,
       lineHeight: 1.5,
+      color: '#01234B',
       '@media (min-width:600px)': {
         fontSize: '1.5rem',
       },
     },
     h5: {
       fontSize: '1.1rem',
+      color: '#01234B',
       '@media (min-width:600px)': {
         fontSize: '1.25rem',
       },
+    },
+    body1: {
+      color: '#01234B',
+    },
+    body2: {
+      color: '#01234B',
     },
   },
   components: {
@@ -100,9 +111,9 @@ const theme = createTheme({
 // Component to conditionally render Navbar based on route
 const ConditionalNavbar = () => {
   const location = useLocation();
-  const isAdminRoute = location.pathname === '/admin';
+  const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/profile');
   
-  // Don't render Navbar on admin dashboard
+  // Don't render Navbar on admin dashboard and profile page
   if (isAdminRoute) {
     return null;
   }
@@ -113,9 +124,9 @@ const ConditionalNavbar = () => {
 // Component to conditionally render Footer based on route
 const ConditionalFooter = () => {
   const location = useLocation();
-  const isAdminRoute = location.pathname === '/admin';
+  const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/profile');
   
-  // Don't render Footer on admin dashboard
+  // Don't render Footer on admin dashboard and profile page
   if (isAdminRoute) {
     return null;
   }
@@ -144,7 +155,7 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               </Routes>
             </div>

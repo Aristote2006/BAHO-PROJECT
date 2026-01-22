@@ -19,13 +19,21 @@ const LoginPage = () => {
     try {
       const response = await authService.login({ email, password });
       
+      // Log response for debugging
+      console.log('Login response status:', response.status);
+      console.log('Login response headers:', Object.fromEntries(response.headers.entries()));
+      
       let data;
       const contentType = response.headers.get("content-type");
+      console.log('Content-Type:', contentType);
+      
       if (contentType && contentType.indexOf("application/json") !== -1) {
         data = await response.json();
+        console.log('Login response data:', data);
       } else {
         const text = await response.text();
-        throw new Error(text || 'Server returned an invalid response');
+        console.error('Non-JSON response:', text);
+        throw new Error(`Server returned ${response.status}: ${text || 'Unknown error'}`);
       }
       
       if (response.ok) {
@@ -41,11 +49,11 @@ const LoginPage = () => {
           navigate('/');
         }
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || `Login failed (${response.status})`);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.error('Login error:', err);
+      console.error('Login error details:', err);
+      setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

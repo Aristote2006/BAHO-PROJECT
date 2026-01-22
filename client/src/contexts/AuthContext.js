@@ -41,6 +41,11 @@ const authReducer = (state, action) => {
         ...state,
         error: action.payload
       };
+    case 'UPDATE_USER_PROFILE':
+      return {
+        ...state,
+        user: action.payload.user
+      };
     default:
       return state;
   }
@@ -170,11 +175,36 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
+  const updateUserProfile = async (profileData) => {
+    try {
+      // In a real app, this would make an API call to update the user
+      // For now, we'll update the local state and localStorage
+      const updatedUser = {
+        ...state.user,
+        ...profileData
+      };
+      
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      dispatch({
+        type: 'UPDATE_USER_PROFILE',
+        payload: {
+          user: updatedUser
+        }
+      });
+      
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
   const value = {
     ...state,
     login,
     register,
-    logout
+    logout,
+    updateUserProfile
   };
 
   return (

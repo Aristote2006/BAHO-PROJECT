@@ -113,7 +113,7 @@ const TeamPage = () => {
     {
       id: 3,
       name: 'UMURUNGI NATASHA',
-      position: 'Communication Manager',
+      position: ' Artist Relation & Manager',
       image: '/images/NATASHA.jpg'
     },
     {
@@ -124,27 +124,27 @@ const TeamPage = () => {
     },
     {
       id: 5,
-      name: 'MUGISHA ALAIN',
-      position: 'Creative Director',
-      image: '/images/LeeImage_140.jpg'
+      name: 'BUKOZI ARISTOTE',
+      position: 'IT Manager',
+      image: '/images/aristote.jpeg'
     },
     {
       id: 6,
-      name: 'UWASE BELLA',
-      position: 'Finance Manager',
-      image: '/images/LeeImage_120.jpg'
+      name: 'KWAMBILIWA JOANA GRACE',
+      position: 'Communication Manager',
+      image: '/images/joana.jpeg'
     },
     {
       id: 7,
-      name: 'GAKURU JEAN',
-      position: 'Cultural Consultant',
-      image: '/images/LeeImage_80.jpg'
+      name: 'NIYOGISUBIZO ELISA',
+      position: 'Project Supervisor',
+      image: '/images/elisa.jpeg'
     },
     {
       id: 8,
-      name: 'KEZA DIANE',
-      position: 'Social Media Expert',
-      image: '/images/LeeImage_65.jpg'
+      name: 'NIYONIZERA FRANK',
+      position: 'Finance Officer',
+      image: '/images/frank.jpeg'
     }
   ];
 

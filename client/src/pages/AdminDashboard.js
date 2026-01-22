@@ -13,7 +13,11 @@ import {
   Toolbar,
   Avatar,
   Chip,
-  CircularProgress
+  CircularProgress,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText
 } from '@mui/material';
 import { 
   Event as EventIcon, 
@@ -21,7 +25,10 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  AccountCircle as AccountCircleIcon,
+  Settings as SettingsIcon,
+  ExitToApp as LogoutIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +48,10 @@ const AdminDashboard = () => {
   const [recentActivity, setRecentActivity] = useState([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  
+  // Add state for profile menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openProfileMenu = Boolean(anchorEl);
 
   // Calculate statistics
   const getThisMonthCount = () => {
@@ -116,6 +127,27 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // Handle profile menu
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleViewProfile = () => {
+    // Navigate to profile page
+    navigate('/profile');
+    handleProfileMenuClose();
+  };
+
+  const handleSettings = () => {
+    // Navigate to profile settings
+    navigate('/profile');
+    handleProfileMenuClose();
   };
 
   // Helper function to format time ago
@@ -270,20 +302,87 @@ const AdminDashboard = () => {
                   bgcolor: '#D4AF37',
                   color: '#01234B',
                   fontWeight: 700,
-                  fontSize: { xs: '1rem', sm: '1.25rem' }
+                  fontSize: { xs: '1rem', sm: '1.25rem' },
+                  cursor: 'pointer',
+                  '&:hover': { opacity: 0.8 }
                 }}
+                onClick={handleProfileMenuOpen}
+                aria-controls={openProfileMenu ? 'profile-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={openProfileMenu ? 'true' : undefined}
               >
-                {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                {(user?.firstName?.charAt(0) || 'U') + (user?.lastName?.charAt(0) || 'A')}
               </Avatar>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Typography variant="body2" sx={{ color: '#D4AF37', fontWeight: 600, lineHeight: 1.2 }}>
-                  {user?.firstName} {user?.lastName}
+                  {user?.firstName && user?.lastName 
+                    ? `${user.firstName} ${user.lastName}`
+                    : user?.email 
+                      ? user.email.split('@')[0]
+                      : 'Admin User'}
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'rgba(212, 175, 55, 0.7)', lineHeight: 1 }}>
-                  {user?.email}
+                  {user?.email || 'admin@baho-africa.org'}
                 </Typography>
               </Box>
             </Box>
+            
+            {/* Profile Menu */}
+            <Menu
+              anchorEl={anchorEl}
+              id="profile-menu"
+              open={openProfileMenu}
+              onClose={handleProfileMenuClose}
+              onClick={handleProfileMenuClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem onClick={handleViewProfile} sx={{ color: 'white' }}>
+                <ListItemIcon sx={{ color: '#D4AF37' }}>
+                  <AccountCircleIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="View Profile" secondary="Manage your account settings" />
+              </MenuItem>
+              <MenuItem onClick={handleSettings} sx={{ color: 'white' }}>
+                <ListItemIcon sx={{ color: '#D4AF37' }}>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Settings" secondary="Preferences and exports" />
+              </MenuItem>
+              <MenuItem onClick={handleLogout} sx={{ color: 'white' }}>
+                <ListItemIcon sx={{ color: '#D4AF37' }}>
+                  <LogoutIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Logout</ListItemText>
+              </MenuItem>
+            </Menu>
+            
             <Button 
               variant="outlined" 
               onClick={handleLogout}
@@ -294,6 +393,7 @@ const AdminDashboard = () => {
                 minWidth: { xs: 'auto', sm: 80 },
                 padding: { xs: '4px 8px', sm: '6px 16px' },
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                display: { xs: 'block', sm: 'none' }, // Only show on small screens
                 '&:hover': {
                   backgroundColor: 'rgba(212, 175, 55, 0.1)',
                   borderColor: '#F9E79F'

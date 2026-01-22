@@ -6,13 +6,15 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    // You can return a loading spinner or similar here
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Or a spinner component
   }
 
-  // Temporarily bypassing authentication for testing
+  if (!isAuthenticated) {
+    // Redirect to login page
+    return <Navigate to="/login" replace />;
+  }
+
   return children;
-  // return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

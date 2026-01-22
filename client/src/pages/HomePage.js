@@ -7,9 +7,9 @@ import { eventService, projectService } from '../services/apiService';
 import { STATIC_PROJECTS, STATIC_EVENTS } from '../constants/staticData';
 
 const HeroSection = styled(Box)(({ theme }) => ({
-  height: '70vh',
+  height: '80vh',
   [theme.breakpoints.down('sm')]: {
-    height: '50vh',
+    height: '60vh',
   },
   display: 'flex',
   alignItems: 'center',
@@ -38,7 +38,7 @@ const SlideshowImage = styled(Box)(({ src }) => ({
   height: '100%',
   backgroundImage: `url(${src})`,
   backgroundSize: 'cover',
-  backgroundPosition: 'center 30%',
+  backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',
   backgroundColor: '#01234B',
 }));
@@ -67,7 +67,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   
   const heroImages = [
-    '/images/home4.jpeg'
+    '/images/LeeImage_7.jpg'
   ];
   
   useEffect(() => {
@@ -149,22 +149,23 @@ const HomePage = () => {
                 variant="h1" 
                 component="h1" 
                 sx={{ 
-                  fontWeight: 800, 
-                  textShadow: '3px 3px 6px rgba(0,0,0,0.6)',
+                  fontWeight: 900, 
+                  textShadow: '4px 4px 8px rgba(0,0,0,0.8)',
                   fontFamily: '"Bookman Old Style", "Bookman", serif',
-                  letterSpacing: '4px',
+                  letterSpacing: '6px',
                   color: 'white',
-                  lineHeight: 1
+                  lineHeight: 1,
+                  fontSize: { xs: '3rem', sm: '4rem', md: '5rem' }
                 }}
               >
                 AFRICA
               </Typography>
             </Box>
 
-            <Typography variant="h3" component="h2" gutterBottom className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ fontWeight: 500, mb: 4, maxWidth: '800px', mx: 'auto', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            <Typography variant="h2" component="h2" gutterBottom className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ fontWeight: 700, mb: 4, maxWidth: '800px', mx: 'auto', textShadow: '3px 3px 6px rgba(0,0,0,0.7)', fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' } }}>
               Empowering <AnimatedText className="text-pulse">Talent</AnimatedText>, Inspiring <AnimatedText className="text-pulse">Africa</AnimatedText>
             </Typography>
-            <Typography variant="h5" className="text-fade-in-up" style={{ animationDelay: '0.6s' }} sx={{ mb: 4, maxWidth: '800px', mx: 'auto', color: '#D4AF37', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+            <Typography variant="h4" className="text-fade-in-up" style={{ animationDelay: '0.6s' }} sx={{ mb: 4, maxWidth: '800px', mx: 'auto', color: '#D4AF37', textShadow: '3px 3px 6px rgba(0,0,0,0.7)', fontSize: { xs: '1.1rem', sm: '1.4rem', md: '1.6rem' } }}>
               Creative and Culture Hub based in Rwanda, empowering youth, artists, refugees, women, and creatives with disabilities through arts, innovation, culture, entrepreneurship, and education.
             </Typography>
             <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>

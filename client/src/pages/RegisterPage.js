@@ -28,13 +28,21 @@ const RegisterPage = () => {
     try {
       const response = await authService.register({ firstName, lastName, email, password });
       
+      // Log response for debugging
+      console.log('Registration response status:', response.status);
+      console.log('Registration response headers:', Object.fromEntries(response.headers.entries()));
+      
       let data;
       const contentType = response.headers.get("content-type");
+      console.log('Content-Type:', contentType);
+      
       if (contentType && contentType.indexOf("application/json") !== -1) {
         data = await response.json();
+        console.log('Registration response data:', data);
       } else {
         const text = await response.text();
-        throw new Error(text || 'Server returned an invalid response');
+        console.error('Non-JSON response:', text);
+        throw new Error(`Server returned ${response.status}: ${text || 'Unknown error'}`);
       }
       
       if (response.ok) {
@@ -50,11 +58,11 @@ const RegisterPage = () => {
           navigate('/');
         }
       } else {
-        setError(data.message || 'Registration failed');
+        setError(data.message || `Registration failed (${response.status})`);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.error('Registration error:', err);
+      console.error('Registration error details:', err);
+      setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
