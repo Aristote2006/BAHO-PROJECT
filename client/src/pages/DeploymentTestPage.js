@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Container, 
   Box, 
@@ -10,8 +10,7 @@ import {
   CircularProgress,
   Accordion,
   AccordionSummary,
-  AccordionDetails,
-  Link
+  AccordionDetails
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -20,13 +19,6 @@ const DeploymentTestPage = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('test@example.com');
   const [password, setPassword] = useState('test123');
-  const [apiUrl, setApiUrl] = useState('');
-
-  useEffect(() => {
-    // Initialize with the current API URL
-    const currentApiUrl = process.env.REACT_APP_API_URL || '/api';
-    setApiUrl(currentApiUrl);
-  }, []);
 
   const runTests = async () => {
     setLoading(true);

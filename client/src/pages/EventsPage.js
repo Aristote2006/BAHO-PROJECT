@@ -204,12 +204,12 @@ const EventsPage = () => {
                     
                     <CardContent sx={{ 
                       flexGrow: 1, 
-                      pt: 2, // Reduced padding on mobile
-                      pb: 2, // Reduced padding on mobile
+                      pt: 1.5, // Reduced padding
+                      pb: 1.5, // Reduced padding
                       width: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      minHeight: { xs: 180, sm: 200 }, // Responsive min-height
+                      minHeight: { xs: 140, sm: 160 }, // Shorter min-height
                       zIndex: 2
                     }}>
                       <Chip
@@ -218,44 +218,44 @@ const EventsPage = () => {
                           backgroundColor: '#D4AF37', 
                           color: '#01234B',
                           fontWeight: 600,
-                          mb: 1, // Reduced margin on mobile
+                          mb: 0.5, // Reduced margin
                           alignSelf: 'flex-start',
-                          fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
+                          fontSize: { xs: '0.7rem', sm: '0.75rem' } // Smaller font size
                         }}
                       />
                       
                       <Typography 
-                        variant="h5" 
+                        variant="h6" 
                         component="h3" 
                         sx={{ 
                           color: '#01234B', 
                           fontWeight: 700,
-                          mb: 1, // Reduced margin on mobile
-                          lineHeight: 1.3,
+                          mb: 0.5, // Reduced margin
+                          lineHeight: 1.2,
                           flex: 1,
-                          fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } // Responsive font size
+                          fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } // Smaller font size
                         }}
                       >
                         {event.title}
                       </Typography>
                       
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}> {/* Reduced margin */}
-                        <CalendarToday sx={{ fontSize: '0.9rem', color: '#D4AF37' }} />
-                        <Typography variant="body2" sx={{ color: '#4A4A4A', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.2 }}> {/* Minimal margin */}
+                        <CalendarToday sx={{ fontSize: '0.8rem', color: '#D4AF37' }} />
+                        <Typography variant="body2" sx={{ color: '#4A4A4A', fontSize: { xs: '0.65rem', sm: '0.7rem' } }}>
                           {formatDate(event.scope.startDate)}
                         </Typography>
                       </Box>
-                      
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}> {/* Reduced margin */}
-                        <AccessTime sx={{ fontSize: '0.9rem', color: '#D4AF37' }} />
-                        <Typography variant="body2" sx={{ color: '#4A4A4A', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                                              
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.2 }}> {/* Minimal margin */}
+                        <AccessTime sx={{ fontSize: '0.8rem', color: '#D4AF37' }} />
+                        <Typography variant="body2" sx={{ color: '#4A4A4A', fontSize: { xs: '0.65rem', sm: '0.7rem' } }}>
                           {event.time}
                         </Typography>
                       </Box>
-                      
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}> {/* Reduced margin */}
-                        <LocationOn sx={{ fontSize: '0.9rem', color: '#D4AF37' }} />
-                        <Typography variant="body2" sx={{ color: '#4A4A4A', fontSize: { xs: '0.7rem', sm: '0.8rem' }, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                              
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}> {/* Reduced margin */}
+                        <LocationOn sx={{ fontSize: '0.8rem', color: '#D4AF37' }} />
+                        <Typography variant="body2" sx={{ color: '#4A4A4A', fontSize: { xs: '0.65rem', sm: '0.7rem' }, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {event.location}
                         </Typography>
                       </Box>
@@ -264,13 +264,13 @@ const EventsPage = () => {
                         variant="body2" 
                         sx={{ 
                           color: '#4A4A4A', 
-                          lineHeight: 1.4, // Slightly reduced for mobile
+                          lineHeight: 1.3, // Tighter line height
                           flex: 1,
                           overflow: 'hidden',
                           display: '-webkit-box',
-                          WebkitLineClamp: 2,
+                          WebkitLineClamp: 1,
                           WebkitBoxOrient: 'vertical',
-                          fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
+                          fontSize: { xs: '0.65rem', sm: '0.7rem' } // Smaller font size
                         }}
                       >
                         {event.description}
@@ -279,13 +279,13 @@ const EventsPage = () => {
                       <Button
                         variant="contained"
                         sx={{ 
-                          mt: 1, // Reduced margin on mobile
+                          mt: 0.5, // Minimal margin
                           backgroundColor: '#D4AF37',
                           color: '#01234B',
                           fontWeight: 600,
-                          fontSize: { xs: '0.8rem', sm: '0.9rem' }, // Responsive font size
-                          py: { xs: 0.8, sm: 1 }, // Responsive padding
-                          px: { xs: 1.5, sm: 2 }, // Responsive padding
+                          fontSize: { xs: '0.7rem', sm: '0.75rem' }, // Smaller font size
+                          py: { xs: 0.5, sm: 0.7 }, // Smaller padding
+                          px: { xs: 1, sm: 1.5 }, // Smaller padding
                           '&:hover': {
                             backgroundColor: '#b8972d',
                           }

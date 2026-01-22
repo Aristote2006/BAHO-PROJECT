@@ -127,7 +127,7 @@ const MilestonesPage = () => {
         
         {milestones.map((milestone, index) => (
           <Box key={index} sx={{ mb: 10 }}>
-            <Typography variant="h4" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 4, color: '#D4AF37' }}>
+            <Typography variant="h4" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 4 }}>
               {milestone.year} Highlights
             </Typography>
             

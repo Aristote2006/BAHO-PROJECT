@@ -6,18 +6,10 @@ import { ArrowForward, CalendarToday, LocationOn } from '@mui/icons-material';
 import { eventService, projectService } from '../services/apiService';
 import { STATIC_PROJECTS, STATIC_EVENTS } from '../constants/staticData';
 
-// Updated HeroSection with better mobile responsiveness
+// Hero Section with clean, responsive design
 const HeroSection = styled(Box)(({ theme }) => ({
-  height: '90vh', // Increased for better visibility
-  [theme.breakpoints.down('md')]: {
-    height: '80vh', // Medium screens
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: '70vh', // Small screens
-  },
-  [theme.breakpoints.down('xs')]: {
-    height: '65vh', // Extra small screens
-  },
+  height: '100vh',
+  minHeight: '600px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -25,19 +17,13 @@ const HeroSection = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
   color: 'white',
   textAlign: 'center',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#01234B',
-    zIndex: 1,
+  [theme.breakpoints.down('sm')]: {
+    height: '80vh',
+    minHeight: '500px',
   },
 }));
 
-const SlideshowImage = styled(Box)(({ theme, src }) => ({
+const SlideshowImage = styled(Box)(({ src }) => ({
   position: 'absolute',
   top: 0,
   left: 0,
@@ -48,10 +34,6 @@ const SlideshowImage = styled(Box)(({ theme, src }) => ({
   backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',
   backgroundColor: '#01234B',
-  // Ensure the image covers properly on all devices
-  [theme.breakpoints.down('sm')]: {
-    backgroundSize: 'cover', // Maintain aspect ratio
-  },
 }));
 
 const AnimatedText = styled('span')(({ theme }) => ({
@@ -59,9 +41,6 @@ const AnimatedText = styled('span')(({ theme }) => ({
   animation: 'bounce 2s infinite',
   color: '#D4AF37',
   textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-  [theme.breakpoints.down('sm')]: {
-    fontSize: '1.2em', // Slightly smaller on mobile
-  },
 }));
 
 const HeroOverlay = styled(Box)({
@@ -70,8 +49,8 @@ const HeroOverlay = styled(Box)({
   left: 0,
   width: '100%',
   height: '100%',
-  background: 'linear-gradient(to bottom, rgba(1, 35, 75, 0.3) 0%, rgba(1, 35, 75, 0.5) 100%)',
-  zIndex: 2.5,
+  background: 'linear-gradient(to bottom, rgba(1, 35, 75, 0.4) 0%, rgba(1, 35, 75, 0.6) 100%)',
+  zIndex: 2,
 });
 
 const HomePage = () => {
@@ -132,24 +111,24 @@ const HomePage = () => {
         ))}
         <HeroOverlay />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 3 }}>
-          <Box py={{ xs: 2, sm: 3, md: 5 }}> {/* Reduced padding on mobile */}
+          <Box py={{ xs: 4, sm: 6, md: 8 }}>
             <Box 
               className="text-fade-in-up"
               sx={{ 
                 display: 'flex', 
-                flexDirection: { xs: 'column', sm: 'row' }, // Stack on mobile
+                flexDirection: { xs: 'column', sm: 'row' },
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                mb: 3, // Reduced margin
-                gap: { xs: 1, sm: 2 } // Adjust gap for mobile
+                mb: 4,
+                gap: 3
               }}
             >
               <Box 
                 sx={{ 
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center', // Center on mobile
-                  mb: { xs: 1, sm: 0 }, // Margin bottom on mobile
+                  justifyContent: 'center',
+                  mb: { xs: 2, sm: 0 },
                   filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.4))'
                 }}
               >
@@ -157,9 +136,9 @@ const HomePage = () => {
                   src="/images/BAHO_BRAND_yellow.png" 
                   alt="BAHO AFRICA Logo" 
                   style={{ 
-                    height: { xs: '60px', sm: '80px', md: '100px' }, // Responsive logo size
+                    height: '100px',
                     width: 'auto',
-                    maxWidth: '100%' // Ensure it fits container
+                    maxWidth: '100%'
                   }}
                 />
               </Box>
@@ -171,11 +150,11 @@ const HomePage = () => {
                   fontWeight: 900, 
                   textShadow: '4px 4px 8px rgba(0,0,0,0.8)',
                   fontFamily: '"Bookman Old Style", "Bookman", serif',
-                  letterSpacing: { xs: '3px', sm: '4px', md: '6px' }, // Adjust for mobile
+                  letterSpacing: '6px',
                   color: 'white',
-                  lineHeight: 1.1, // Slightly increased for readability
-                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem', lg: '5rem' }, // More responsive sizing
-                  textAlign: { xs: 'center', sm: 'left' } // Center on mobile
+                  lineHeight: 1.1,
+                  fontSize: { xs: '3rem', sm: '4rem', md: '5rem', lg: '6rem' },
+                  textAlign: { xs: 'center', sm: 'left' }
                 }}
               >
                 AFRICA
@@ -190,11 +169,11 @@ const HomePage = () => {
               style={{ animationDelay: '0.3s' }} 
               sx={{ 
                 fontWeight: 700, 
-                mb: 3, // Reduced margin
-                maxWidth: { xs: '95%', sm: '80%', md: '800px' }, // Responsive max-width
+                mb: 4,
+                maxWidth: '800px',
                 mx: 'auto', 
                 textShadow: '3px 3px 6px rgba(0,0,0,0.7)', 
-                fontSize: { xs: '1.3rem', sm: '1.6rem', md: '2rem', lg: '2.5rem' } // Responsive font size
+                fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }
               }}
             >
               Empowering <AnimatedText className="text-pulse">Talent</AnimatedText>, Inspiring <AnimatedText className="text-pulse">Africa</AnimatedText>
@@ -205,13 +184,13 @@ const HomePage = () => {
               className="text-fade-in-up" 
               style={{ animationDelay: '0.6s' }} 
               sx={{ 
-                mb: 3, // Reduced margin
-                maxWidth: { xs: '95%', sm: '80%', md: '800px' }, // Responsive max-width
+                mb: 5,
+                maxWidth: '800px',
                 mx: 'auto', 
                 color: '#D4AF37', 
                 textShadow: '3px 3px 6px rgba(0,0,0,0.7)', 
-                fontSize: { xs: '0.9rem', sm: '1rem', md: '1.2rem', lg: '1.6rem' }, // Responsive font size
-                lineHeight: 1.6 // Better line height for readability
+                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem', lg: '1.5rem' },
+                lineHeight: 1.6
               }}
             >
               Creative and Culture Hub based in Rwanda, empowering youth, artists, refugees, women, and creatives with disabilities through arts, innovation, culture, entrepreneurship, and education.
@@ -219,13 +198,13 @@ const HomePage = () => {
             
             <Box 
               sx={{ 
-                mt: 3, // Reduced margin
+                mt: 4,
                 display: 'flex', 
                 justifyContent: 'center', 
-                gap: { xs: 1, sm: 2 }, // Responsive gap
-                flexWrap: 'wrap', // Wrap buttons on small screens
-                flexDirection: { xs: 'column', sm: 'row' }, // Stack buttons vertically on mobile
-                alignItems: 'center' // Center items
+                gap: 2,
+                flexWrap: 'wrap',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: 'center'
               }}
             >
               <Button 
@@ -638,48 +617,49 @@ const HomePage = () => {
                     )}
                     <CardMedia
                       component="img"
-                      height={{ xs: '160', sm: '180', md: '200' }} // Responsive heights
+                      height={{ xs: '120', sm: '140', md: '160' }} // Shorter heights
                       image={event.image || '/images/placeholder-event.jpg'}
                       alt={event.title}
                     />
-                    <CardContent sx={{ flexGrow: 1 }}>
+                    <CardContent sx={{ flexGrow: 1, py: 1.5 }}>
                       <Chip 
                         label={event.category} 
                         size="small" 
                         sx={{ 
-                          mb: 1, 
+                          mb: 0.5, // Reduced margin
                           backgroundColor: '#D4AF37', 
                           color: '#01234B', 
                           fontWeight: 600,
-                          fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
+                          fontSize: { xs: '0.65rem', sm: '0.7rem' } // Smaller font size
                         }} 
                       />
                       <Typography 
                         gutterBottom 
-                        variant="h5" 
+                        variant="h6" 
                         component="h3" 
                         sx={{ 
                           color: '#01234B', 
                           fontWeight: 600,
-                          fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } // Responsive font size
+                          mb: 0.5, // Reduced margin
+                          fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } // Smaller font size
                         }}
                       >
                         {event.title}
                       </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: '#666' }}>
-                        <CalendarToday sx={{ fontSize: '1rem' }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, color: '#666' }}>
+                        <CalendarToday sx={{ fontSize: '0.9rem' }} />
                         <Typography 
                           variant="body2"
-                          sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }} // Responsive font size
+                          sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }} // Smaller font size
                         >
                           {event.scope?.startDate ? (typeof event.scope.startDate === 'string' && event.scope.startDate.includes('Soon') ? event.scope.startDate : new Date(event.scope.startDate).toLocaleDateString()) : 'Date TBD'}
                         </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: '#666' }}>
-                        <LocationOn sx={{ fontSize: '1rem' }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, color: '#666' }}>
+                        <LocationOn sx={{ fontSize: '0.9rem' }} />
                         <Typography 
                           variant="body2"
-                          sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }} // Responsive font size
+                          sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }} // Smaller font size
                         >
                           {event.location}
                         </Typography>
@@ -688,13 +668,14 @@ const HomePage = () => {
                         variant="body2" 
                         sx={{ 
                           color: '#4A4A4A',
-                          fontSize: { xs: '0.8rem', sm: '0.85rem' } // Responsive font size
+                          fontSize: { xs: '0.7rem', sm: '0.75rem' }, // Smaller font size
+                          lineHeight: 1.3
                         }}
                       >
-                        {event.description?.substring(0, 100)}...
+                        {event.description?.substring(0, 80)}...
                       </Typography>
                     </CardContent>
-                    <Box p={{ xs: 1.5, sm: 2 }} pt={0}>
+                    <Box p={{ xs: 1, sm: 1.5 }} pt={0}>
                       <Button 
                         component={Link} 
                         to="/events" 
@@ -703,7 +684,7 @@ const HomePage = () => {
                         sx={{ 
                           color: '#01234B', 
                           borderColor: '#01234B',
-                          fontSize: { xs: '0.8rem', sm: '0.9rem' } // Responsive font size
+                          fontSize: { xs: '0.75rem', sm: '0.8rem' } // Smaller font size
                         }}
                       >
                         Learn More

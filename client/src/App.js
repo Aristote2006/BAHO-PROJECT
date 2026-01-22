@@ -8,6 +8,7 @@ import AboutPage from './pages/AboutPage';
 import WhatWeDoPage from './pages/WhatWeDoPage';
 import ProjectsPage from './pages/ProjectsPage';
 import EventsPage from './pages/EventsPage';
+import MilestonesPage from './pages/MilestonesPage';
 import TeamPage from './pages/TeamPage';
 import ContactPage from './pages/ContactPage';
 import LoginPage from './pages/LoginPage';
@@ -98,7 +99,7 @@ const AppContent = () => {
       <Navbar />
       <main style={{ 
         flex: 1, 
-        paddingTop: '64px', // Account for fixed navbar height
+        paddingTop: '0px', // Remove extra padding below navbar
       }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -106,6 +107,7 @@ const AppContent = () => {
           <Route path="/what-we-do" element={<WhatWeDoPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/milestones" element={<MilestonesPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
