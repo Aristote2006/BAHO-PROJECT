@@ -95,7 +95,11 @@ const ProjectDetailPage = () => {
             <Card sx={{ 
               borderRadius: 2,
               boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              '&:hover': {
+                transform: { xs: 'none', sm: 'translateY(-5px)' }, // No hover effect on mobile
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+              }
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Typography variant="h4" component="h2" sx={{ color: '#01234B', fontWeight: 600, mb: 3 }}>
@@ -153,7 +157,7 @@ const ProjectDetailPage = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <StyledCard>
                 <CardContent>

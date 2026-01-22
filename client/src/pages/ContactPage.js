@@ -120,7 +120,7 @@ const ContactPage = () => {
       <Container maxWidth="lg" sx={{ py: 8, background: 'linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url(/images/LeeImage_140.jpg) center/cover', borderRadius: 2, p: 3 }}>
         <Grid container spacing={6}>
           {/* Contact Information */}
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} sm={12} md={5}>
             <StyledPaper elevation={3}>
               <Typography variant="h4" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 4 }}>
                 Contact Information
@@ -189,7 +189,7 @@ const ContactPage = () => {
           </Grid>
           
           {/* Contact Form */}
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} sm={12} md={7}>
             <StyledPaper elevation={3}>
               <Typography variant="h4" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 4 }}>
                 Send Us a Message

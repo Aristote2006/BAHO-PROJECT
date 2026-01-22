@@ -179,7 +179,7 @@ const TeamPage = () => {
         
         <Grid container spacing={6}>
           {teamMembers.map((member) => (
-            <Grid item xs={12} sm={6} md={6} lg={3} key={member.id}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={member.id}>
               <StyledCard>
                 <ImageContainer>
                   <CardMedia

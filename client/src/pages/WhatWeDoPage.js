@@ -70,7 +70,7 @@ const WhatWeDoPage = () => {
         
         <Grid container spacing={6}>
           {services.map((service, index) => (
-            <Grid item xs={12} md={6} key={index}>
+            <Grid item xs={12} sm={6} key={index}>
               <StyledCard>
                 <CardMedia
                   component="img"
@@ -100,7 +100,7 @@ const WhatWeDoPage = () => {
             Our Approach
           </Typography>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <Paper elevation={3} sx={{ p: 4, borderRadius: 2, height: '100%' }}>
                 <Typography variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} gutterBottom sx={{ color: '#D4AF37', fontWeight: 600 }}>
                   Community-Centered
@@ -110,7 +110,7 @@ const WhatWeDoPage = () => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <Paper elevation={3} sx={{ p: 4, borderRadius: 2, height: '100%' }}>
                 <Typography variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} gutterBottom sx={{ color: '#D4AF37', fontWeight: 600 }}>
                   Inclusive
@@ -120,7 +120,7 @@ const WhatWeDoPage = () => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <Paper elevation={3} sx={{ p: 4, borderRadius: 2, height: '100%' }}>
                 <Typography variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.2s' }} gutterBottom sx={{ color: '#D4AF37', fontWeight: 600 }}>
                   Sustainable

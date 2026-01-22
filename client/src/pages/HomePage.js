@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography, Button, Grid, Paper, Slide, Card, CardContent, CardMedia, Chip, CircularProgress } from '@mui/material';
+import { Container, Box, Typography, Button, Grid, Paper, Card, CardContent, CardMedia, Chip, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { ArrowForward, CalendarToday, LocationOn, AccessTime } from '@mui/icons-material';
 import { eventService, projectService } from '../services/apiService';
 import { STATIC_PROJECTS, STATIC_EVENTS } from '../constants/staticData';
 
+// Updated HeroSection with better mobile responsiveness
 const HeroSection = styled(Box)(({ theme }) => ({
-  height: '80vh',
+  height: '90vh', // Increased for better visibility
+  [theme.breakpoints.down('md')]: {
+    height: '80vh', // Medium screens
+  },
   [theme.breakpoints.down('sm')]: {
-    height: '60vh',
+    height: '70vh', // Small screens
+  },
+  [theme.breakpoints.down('xs')]: {
+    height: '65vh', // Extra small screens
   },
   display: 'flex',
   alignItems: 'center',
@@ -41,6 +48,10 @@ const SlideshowImage = styled(Box)(({ src }) => ({
   backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',
   backgroundColor: '#01234B',
+  // Ensure the image covers properly on all devices
+  [theme.breakpoints.down('sm')]: {
+    backgroundSize: 'cover', // Maintain aspect ratio
+  },
 }));
 
 const AnimatedText = styled('span')(({ theme }) => ({
@@ -48,6 +59,9 @@ const AnimatedText = styled('span')(({ theme }) => ({
   animation: 'bounce 2s infinite',
   color: '#D4AF37',
   textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1.2em', // Slightly smaller on mobile
+  },
 }));
 
 const HeroOverlay = styled(Box)({
@@ -118,30 +132,35 @@ const HomePage = () => {
         ))}
         <HeroOverlay />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 3 }}>
-          <Box py={5}>
+          <Box py={{ xs: 2, sm: 3, md: 5 }}> {/* Reduced padding on mobile */}
             <Box 
               className="text-fade-in-up"
               sx={{ 
                 display: 'flex', 
-                flexDirection: 'row', 
+                flexDirection: { xs: 'column', sm: 'row' }, // Stack on mobile
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                mb: 4,
-                gap: 2
+                mb: 3, // Reduced margin
+                gap: { xs: 1, sm: 2 } // Adjust gap for mobile
               }}
             >
               <Box 
                 sx={{ 
-                  transform: 'scale(1.2)',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center', // Center on mobile
+                  mb: { xs: 1, sm: 0 }, // Margin bottom on mobile
                   filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.4))'
                 }}
               >
                 <img 
                   src="/images/BAHO_BRAND_yellow.png" 
                   alt="BAHO AFRICA Logo" 
-                  style={{ height: '100px', width: 'auto' }}
+                  style={{ 
+                    height: { xs: '60px', sm: '80px', md: '100px' }, // Responsive logo size
+                    width: 'auto',
+                    maxWidth: '100%' // Ensure it fits container
+                  }}
                 />
               </Box>
 
@@ -152,23 +171,63 @@ const HomePage = () => {
                   fontWeight: 900, 
                   textShadow: '4px 4px 8px rgba(0,0,0,0.8)',
                   fontFamily: '"Bookman Old Style", "Bookman", serif',
-                  letterSpacing: '6px',
+                  letterSpacing: { xs: '3px', sm: '4px', md: '6px' }, // Adjust for mobile
                   color: 'white',
-                  lineHeight: 1,
-                  fontSize: { xs: '3rem', sm: '4rem', md: '5rem' }
+                  lineHeight: 1.1, // Slightly increased for readability
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem', lg: '5rem' }, // More responsive sizing
+                  textAlign: { xs: 'center', sm: 'left' } // Center on mobile
                 }}
               >
                 AFRICA
               </Typography>
             </Box>
 
-            <Typography variant="h2" component="h2" gutterBottom className="text-fade-in-up" style={{ animationDelay: '0.3s' }} sx={{ fontWeight: 700, mb: 4, maxWidth: '800px', mx: 'auto', textShadow: '3px 3px 6px rgba(0,0,0,0.7)', fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' } }}>
+            <Typography 
+              variant="h2" 
+              component="h2" 
+              gutterBottom 
+              className="text-fade-in-up" 
+              style={{ animationDelay: '0.3s' }} 
+              sx={{ 
+                fontWeight: 700, 
+                mb: 3, // Reduced margin
+                maxWidth: { xs: '95%', sm: '80%', md: '800px' }, // Responsive max-width
+                mx: 'auto', 
+                textShadow: '3px 3px 6px rgba(0,0,0,0.7)', 
+                fontSize: { xs: '1.3rem', sm: '1.6rem', md: '2rem', lg: '2.5rem' } // Responsive font size
+              }}
+            >
               Empowering <AnimatedText className="text-pulse">Talent</AnimatedText>, Inspiring <AnimatedText className="text-pulse">Africa</AnimatedText>
             </Typography>
-            <Typography variant="h4" className="text-fade-in-up" style={{ animationDelay: '0.6s' }} sx={{ mb: 4, maxWidth: '800px', mx: 'auto', color: '#D4AF37', textShadow: '3px 3px 6px rgba(0,0,0,0.7)', fontSize: { xs: '1.1rem', sm: '1.4rem', md: '1.6rem' } }}>
+            
+            <Typography 
+              variant="h4" 
+              className="text-fade-in-up" 
+              style={{ animationDelay: '0.6s' }} 
+              sx={{ 
+                mb: 3, // Reduced margin
+                maxWidth: { xs: '95%', sm: '80%', md: '800px' }, // Responsive max-width
+                mx: 'auto', 
+                color: '#D4AF37', 
+                textShadow: '3px 3px 6px rgba(0,0,0,0.7)', 
+                fontSize: { xs: '0.9rem', sm: '1rem', md: '1.2rem', lg: '1.6rem' }, // Responsive font size
+                lineHeight: 1.6 // Better line height for readability
+              }}
+            >
               Creative and Culture Hub based in Rwanda, empowering youth, artists, refugees, women, and creatives with disabilities through arts, innovation, culture, entrepreneurship, and education.
             </Typography>
-            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+            
+            <Box 
+              sx={{ 
+                mt: 3, // Reduced margin
+                display: 'flex', 
+                justifyContent: 'center', 
+                gap: { xs: 1, sm: 2 }, // Responsive gap
+                flexWrap: 'wrap', // Wrap buttons on small screens
+                flexDirection: { xs: 'column', sm: 'row' }, // Stack buttons vertically on mobile
+                alignItems: 'center' // Center items
+              }}
+            >
               <Button 
                 component={Link} 
                 to="/about" 
@@ -177,9 +236,11 @@ const HomePage = () => {
                 sx={{ 
                   backgroundColor: '#D4AF37', 
                   color: '#01234B',
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
+                  px: { xs: 3, sm: 4 }, // Responsive padding
+                  py: { xs: 1, sm: 1.5 }, // Responsive padding
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' }, // Responsive font size
+                  mb: { xs: 1, sm: 0 }, // Margin bottom on mobile for vertical stacking
+                  minWidth: { xs: '200px', sm: 'auto' }, // Minimum width on mobile
                   '&:hover': {
                     backgroundColor: '#b8972d',
                   }
@@ -187,6 +248,7 @@ const HomePage = () => {
               >
                 About Us
               </Button>
+              
               <Button 
                 component={Link} 
                 to="/projects" 
@@ -195,9 +257,11 @@ const HomePage = () => {
                 sx={{ 
                   borderColor: '#D4AF37', 
                   color: 'white',
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
+                  px: { xs: 3, sm: 4 }, // Responsive padding
+                  py: { xs: 1, sm: 1.5 }, // Responsive padding
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' }, // Responsive font size
+                  mb: { xs: 1, sm: 0 }, // Margin bottom on mobile for vertical stacking
+                  minWidth: { xs: '200px', sm: 'auto' }, // Minimum width on mobile
                   '&:hover': {
                     backgroundColor: 'rgba(212, 175, 55, 0.1)',
                     borderColor: '#D4AF37',
@@ -206,6 +270,7 @@ const HomePage = () => {
               >
                 Our Projects
               </Button>
+              
               <Button 
                 component={Link} 
                 to="/contact" 
@@ -214,9 +279,10 @@ const HomePage = () => {
                 sx={{ 
                   borderColor: '#D4AF37', 
                   color: 'white',
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
+                  px: { xs: 3, sm: 4 }, // Responsive padding
+                  py: { xs: 1, sm: 1.5 }, // Responsive padding
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' }, // Responsive font size
+                  minWidth: { xs: '200px', sm: 'auto' }, // Minimum width on mobile
                   '&:hover': {
                     backgroundColor: 'rgba(212, 175, 55, 0.1)',
                     borderColor: '#D4AF37',
@@ -231,20 +297,60 @@ const HomePage = () => {
       </HeroSection>
 
       {/* About Section */}
-      <Box py={8} sx={{ backgroundColor: '#F5F5F5' }}>
+      <Box py={{ xs: 5, sm: 6, md: 8 }} sx={{ backgroundColor: '#F5F5F5' }}>
         <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
+          <Grid container spacing={{ xs: 3, sm: 4 }} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="h2" component="h2" className="text-slide-in-left" style={{ animationDelay: '0.1s' }} gutterBottom sx={{ color: '#01234B', fontWeight: 600 }}>
+              <Typography 
+                variant="h2" 
+                component="h2" 
+                className="text-slide-in-left" 
+                style={{ animationDelay: '0.1s' }} 
+                gutterBottom 
+                sx={{ 
+                  color: '#01234B', 
+                  fontWeight: 600,
+                  fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } // Responsive font size
+                }}
+              >
                 About BAHO AFRICA
               </Typography>
-              <Typography variant="h5" className="text-slide-in-left" style={{ animationDelay: '0.2s' }} sx={{ color: '#4A4A4A', mb: 3 }}>
+              <Typography 
+                variant="h5" 
+                className="text-slide-in-left" 
+                style={{ animationDelay: '0.2s' }} 
+                sx={{ 
+                  color: '#4A4A4A', 
+                  mb: 2, // Reduced margin
+                  fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' } // Responsive font size
+                }}
+              >
                 Empowering communities through creativity and innovation
               </Typography>
-              <Typography variant="body1" className="text-slide-in-left" style={{ animationDelay: '0.3s' }} paragraph sx={{ color: '#4A4A4A', lineHeight: 1.8 }}>
+              <Typography 
+                variant="body1" 
+                className="text-slide-in-left" 
+                style={{ animationDelay: '0.3s' }} 
+                paragraph 
+                sx={{ 
+                  color: '#4A4A4A', 
+                  lineHeight: 1.7, // Slightly reduced for mobile
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } // Responsive font size
+                }}
+              >
                 BAHO AFRICA is a Creative and Culture Hub based in Rwanda, dedicated to empowering youth, artists, refugees, women, and creatives with disabilities. Through arts, innovation, culture, entrepreneurship, and education, we foster an environment where talent can flourish and contribute to the development of our communities.
               </Typography>
-              <Typography variant="body1" className="text-slide-in-left" style={{ animationDelay: '0.4s' }} paragraph sx={{ color: '#4A4A4A', lineHeight: 1.8 }}>
+              <Typography 
+                variant="body1" 
+                className="text-slide-in-left" 
+                style={{ animationDelay: '0.4s' }} 
+                paragraph 
+                sx={{ 
+                  color: '#4A4A4A', 
+                  lineHeight: 1.7, // Slightly reduced for mobile
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } // Responsive font size
+                }}
+              >
                 Our mission is to create sustainable opportunities for creative individuals, providing them with the tools, resources, and platforms they need to showcase their talents and build meaningful careers in the creative economy.
               </Typography>
               <Button 
@@ -257,7 +363,10 @@ const HomePage = () => {
                 sx={{ 
                   backgroundColor: '#01234B', 
                   color: 'white',
-                  mt: 2,
+                  mt: 1, // Reduced margin
+                  px: { xs: 2, sm: 3 }, // Responsive padding
+                  py: { xs: 1, sm: 1.2 }, // Responsive padding
+                  fontSize: { xs: '0.9rem', sm: '1rem' }, // Responsive font size
                   '&:hover': {
                     backgroundColor: '#0a3666',
                   }
@@ -270,7 +379,7 @@ const HomePage = () => {
               <Paper 
                 elevation={3} 
                 sx={{ 
-                  height: { xs: '250px', sm: '350px', md: '400px' }, 
+                  height: { xs: '200px', sm: '250px', md: '350px', lg: '400px' }, // Responsive heights
                   backgroundImage: 'url(/images/LeeImage_80.jpg)', // Using your local image
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
@@ -285,17 +394,30 @@ const HomePage = () => {
       </Box>
 
       {/* What We Do Section */}
-      <Box py={8}>
+      <Box py={{ xs: 5, sm: 6, md: 8 }}>
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 6 }}>
+          <Typography 
+            variant="h2" 
+            component="h2" 
+            className="text-fade-in-up" 
+            style={{ animationDelay: '0.1s' }} 
+            align="center" 
+            gutterBottom 
+            sx={{ 
+              color: '#01234B', 
+              fontWeight: 600, 
+              mb: 4, // Reduced margin
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } // Responsive font size
+            }}
+          >
             What We Do
           </Typography>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}> {/* Responsive spacing */}
+            <Grid item xs={12} sm={6} md={4}> {/* Responsive grid columns */}
               <Paper 
                 elevation={3} 
                 sx={{ 
-                  p: 3, 
+                  p: { xs: 2, sm: 3 }, // Responsive padding
                   height: '100%',
                   textAlign: 'center',
                   borderRadius: 2,
@@ -303,7 +425,7 @@ const HomePage = () => {
                   boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                   '&:hover': {
-                    transform: 'translateY(-8px)',
+                    transform: { xs: 'none', sm: 'translateY(-8px)' }, // No hover effect on mobile
                     boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
                   }
                 }}
@@ -314,21 +436,46 @@ const HomePage = () => {
                   style={{ animationDelay: '0.2s' }}
                   src="/images/creativearts.jpeg" // Using your local image
                   alt="Creative & Performing Arts" 
-                  sx={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 2, mb: 2 }}
+                  sx={{ 
+                    width: '100%', 
+                    height: { xs: '140px', sm: '160px', md: '180px' }, // Responsive heights
+                    objectFit: 'cover', 
+                    borderRadius: 2, 
+                    mb: 2 
+                  }}
                 />
-                <Typography variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} gutterBottom sx={{ color: '#01234B', fontWeight: 600 }}>
+                <Typography 
+                  variant="h5" 
+                  component="h3" 
+                  className="text-fade-in-up" 
+                  style={{ animationDelay: '0.3s' }} 
+                  gutterBottom 
+                  sx={{ 
+                    color: '#01234B', 
+                    fontWeight: 600,
+                    fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' } // Responsive font size
+                  }}
+                >
                   Creative & Performing Arts
                 </Typography>
-                <Typography variant="body1" className="text-fade-in-up" style={{ animationDelay: '0.4s' }} sx={{ color: '#4A4A4A' }}>
+                <Typography 
+                  variant="body1" 
+                  className="text-fade-in-up" 
+                  style={{ animationDelay: '0.4s' }} 
+                  sx={{ 
+                    color: '#4A4A4A',
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' } // Responsive font size
+                  }}
+                >
                   We provide platforms for artists to showcase their talents through performances, exhibitions, and cultural events.
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={6} md={4}> {/* Responsive grid columns */}
               <Paper 
                 elevation={3} 
                 sx={{ 
-                  p: 3, 
+                  p: { xs: 2, sm: 3 }, // Responsive padding
                   height: '100%',
                   textAlign: 'center',
                   borderRadius: 2,
@@ -336,7 +483,7 @@ const HomePage = () => {
                   boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                   '&:hover': {
-                    transform: 'translateY(-8px)',
+                    transform: { xs: 'none', sm: 'translateY(-8px)' }, // No hover effect on mobile
                     boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
                   }
                 }}
@@ -347,21 +494,46 @@ const HomePage = () => {
                   style={{ animationDelay: '0.2s' }}
                   src="/images/cultureheritage.jpeg" // Using your local image
                   alt="Cultural Heritage & Innovation" 
-                  sx={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 2, mb: 2 }}
+                  sx={{ 
+                    width: '100%', 
+                    height: { xs: '140px', sm: '160px', md: '180px' }, // Responsive heights
+                    objectFit: 'cover', 
+                    borderRadius: 2, 
+                    mb: 2 
+                  }}
                 />
-                <Typography variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} gutterBottom sx={{ color: '#01234B', fontWeight: 600 }}>
+                <Typography 
+                  variant="h5" 
+                  component="h3" 
+                  className="text-fade-in-up" 
+                  style={{ animationDelay: '0.3s' }} 
+                  gutterBottom 
+                  sx={{ 
+                    color: '#01234B', 
+                    fontWeight: 600,
+                    fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' } // Responsive font size
+                  }}
+                >
                   Cultural Heritage & Innovation
                 </Typography>
-                <Typography variant="body1" className="text-fade-in-up" style={{ animationDelay: '0.4s' }} sx={{ color: '#4A4A4A' }}>
+                <Typography 
+                  variant="body1" 
+                  className="text-fade-in-up" 
+                  style={{ animationDelay: '0.4s' }} 
+                  sx={{ 
+                    color: '#4A4A4A',
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' } // Responsive font size
+                  }}
+                >
                   We preserve and promote African cultural heritage while fostering innovation in traditional arts and crafts.
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={12} md={4}> {/* Full width on small screens, normal on medium+ */}
               <Paper 
                 elevation={3} 
                 sx={{ 
-                  p: 3, 
+                  p: { xs: 2, sm: 3 }, // Responsive padding
                   height: '100%',
                   textAlign: 'center',
                   borderRadius: 2,
@@ -369,7 +541,7 @@ const HomePage = () => {
                   boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                   '&:hover': {
-                    transform: 'translateY(-8px)',
+                    transform: { xs: 'none', sm: 'translateY(-8px)' }, // No hover effect on mobile
                     boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
                   }
                 }}
@@ -380,12 +552,37 @@ const HomePage = () => {
                   style={{ animationDelay: '0.2s' }}
                   src="/images/education.jpeg" // Using your local image
                   alt="Education & Capacity Building" 
-                  sx={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 2, mb: 2 }}
+                  sx={{ 
+                    width: '100%', 
+                    height: { xs: '140px', sm: '160px', md: '180px' }, // Responsive heights
+                    objectFit: 'cover', 
+                    borderRadius: 2, 
+                    mb: 2 
+                  }}
                 />
-                <Typography variant="h5" component="h3" className="text-fade-in-up" style={{ animationDelay: '0.3s' }} gutterBottom sx={{ color: '#01234B', fontWeight: 600 }}>
+                <Typography 
+                  variant="h5" 
+                  component="h3" 
+                  className="text-fade-in-up" 
+                  style={{ animationDelay: '0.3s' }} 
+                  gutterBottom 
+                  sx={{ 
+                    color: '#01234B', 
+                    fontWeight: 600,
+                    fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' } // Responsive font size
+                  }}
+                >
                   Education & Capacity Building
                 </Typography>
-                <Typography variant="body1" className="text-fade-in-up" style={{ animationDelay: '0.4s' }} sx={{ color: '#4A4A4A' }}>
+                <Typography 
+                  variant="body1" 
+                  className="text-fade-in-up" 
+                  style={{ animationDelay: '0.4s' }} 
+                  sx={{ 
+                    color: '#4A4A4A',
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' } // Responsive font size
+                  }}
+                >
                   We offer training programs and workshops to enhance skills in various creative fields and entrepreneurship.
                 </Typography>
               </Paper>
@@ -395,17 +592,30 @@ const HomePage = () => {
       </Box>
 
       {/* Events Section Preview */}
-      <Box py={8}>
+      <Box py={{ xs: 5, sm: 6, md: 8 }}>
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 6 }}>
+          <Typography 
+            variant="h2" 
+            component="h2" 
+            className="text-fade-in-up" 
+            style={{ animationDelay: '0.1s' }} 
+            align="center" 
+            gutterBottom 
+            sx={{ 
+              color: '#01234B', 
+              fontWeight: 600, 
+              mb: 4, // Reduced margin
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } // Responsive font size
+            }}
+          >
             Upcoming Events
           </Typography>
           {loading ? (
-            <Box textAlign="center" py={4}><CircularProgress sx={{ color: '#D4AF37' }} /></Box>
+            <Box textAlign="center" py={{ xs: 3, sm: 4 }}><CircularProgress sx={{ color: '#D4AF37' }} /></Box>
           ) : (
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}> {/* Responsive spacing */}
               {displayEvents.map((event, index) => (
-                <Grid item xs={12} md={4} key={event._id}>
+                <Grid item xs={12} sm={6} md={4} key={event._id}> {/* Responsive grid columns */}
                   <Card sx={{ 
                     height: '100%', 
                     display: 'flex', 
@@ -414,7 +624,9 @@ const HomePage = () => {
                     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                     transition: 'transform 0.3s ease',
                     position: 'relative',
-                    '&:hover': { transform: 'translateY(-8px)' }
+                    '&:hover': { 
+                      transform: { xs: 'none', sm: 'translateY(-8px)' } // No hover effect on mobile
+                    }
                   }}>
                     { !event.isStatic && (
                       <Chip 
@@ -426,33 +638,74 @@ const HomePage = () => {
                     )}
                     <CardMedia
                       component="img"
-                      height="200"
+                      height={{ xs: '160', sm: '180', md: '200' }} // Responsive heights
                       image={event.image || '/images/placeholder-event.jpg'}
                       alt={event.title}
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
-                      <Chip label={event.category} size="small" sx={{ mb: 1, backgroundColor: '#D4AF37', color: '#01234B', fontWeight: 600 }} />
-                      <Typography gutterBottom variant="h5" component="h3" sx={{ color: '#01234B', fontWeight: 600 }}>
+                      <Chip 
+                        label={event.category} 
+                        size="small" 
+                        sx={{ 
+                          mb: 1, 
+                          backgroundColor: '#D4AF37', 
+                          color: '#01234B', 
+                          fontWeight: 600,
+                          fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
+                        }} 
+                      />
+                      <Typography 
+                        gutterBottom 
+                        variant="h5" 
+                        component="h3" 
+                        sx={{ 
+                          color: '#01234B', 
+                          fontWeight: 600,
+                          fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } // Responsive font size
+                        }}
+                      >
                         {event.title}
                       </Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: '#666' }}>
                         <CalendarToday sx={{ fontSize: '1rem' }} />
-                        <Typography variant="body2">
+                        <Typography 
+                          variant="body2"
+                          sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }} // Responsive font size
+                        >
                           {event.scope?.startDate ? (typeof event.scope.startDate === 'string' && event.scope.startDate.includes('Soon') ? event.scope.startDate : new Date(event.scope.startDate).toLocaleDateString()) : 'Date TBD'}
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: '#666' }}>
                         <LocationOn sx={{ fontSize: '1rem' }} />
-                        <Typography variant="body2">
+                        <Typography 
+                          variant="body2"
+                          sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }} // Responsive font size
+                        >
                           {event.location}
                         </Typography>
                       </Box>
-                      <Typography variant="body2" sx={{ color: '#4A4A4A' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          color: '#4A4A4A',
+                          fontSize: { xs: '0.8rem', sm: '0.85rem' } // Responsive font size
+                        }}
+                      >
                         {event.description?.substring(0, 100)}...
                       </Typography>
                     </CardContent>
-                    <Box p={2} pt={0}>
-                      <Button component={Link} to="/events" fullWidth variant="outlined" sx={{ color: '#01234B', borderColor: '#01234B' }}>
+                    <Box p={{ xs: 1.5, sm: 2 }} pt={0}>
+                      <Button 
+                        component={Link} 
+                        to="/events" 
+                        fullWidth 
+                        variant="outlined" 
+                        sx={{ 
+                          color: '#01234B', 
+                          borderColor: '#01234B',
+                          fontSize: { xs: '0.8rem', sm: '0.9rem' } // Responsive font size
+                        }}
+                      >
                         Learn More
                       </Button>
                     </Box>
@@ -461,8 +714,23 @@ const HomePage = () => {
               ))}
             </Grid>
           )}
-          <Box textAlign="center" mt={6}>
-            <Button component={Link} to="/events" variant="contained" size="large" sx={{ backgroundColor: '#D4AF37', color: '#01234B', '&:hover': { backgroundColor: '#b8972d' } }}>
+          <Box textAlign="center" mt={{ xs: 4, sm: 6 }}>
+            <Button 
+              component={Link} 
+              to="/events" 
+              variant="contained" 
+              size="large" 
+              sx={{ 
+                backgroundColor: '#D4AF37', 
+                color: '#01234B', 
+                '&:hover': { 
+                  backgroundColor: '#b8972d' 
+                },
+                px: { xs: 3, sm: 4 }, // Responsive padding
+                py: { xs: 1, sm: 1.2 }, // Responsive padding
+                fontSize: { xs: '0.9rem', sm: '1rem' } // Responsive font size
+              }}
+            >
               View All Events
             </Button>
           </Box>
@@ -470,17 +738,30 @@ const HomePage = () => {
       </Box>
 
       {/* Projects Section Preview */}
-      <Box py={8} sx={{ backgroundColor: '#F5F5F5' }}>
+      <Box py={{ xs: 5, sm: 6, md: 8 }} sx={{ backgroundColor: '#F5F5F5' }}>
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" className="text-fade-in-up" style={{ animationDelay: '0.1s' }} align="center" gutterBottom sx={{ color: '#01234B', fontWeight: 600, mb: 6 }}>
+          <Typography 
+            variant="h2" 
+            component="h2" 
+            className="text-fade-in-up" 
+            style={{ animationDelay: '0.1s' }} 
+            align="center" 
+            gutterBottom 
+            sx={{ 
+              color: '#01234B', 
+              fontWeight: 600, 
+              mb: 4, // Reduced margin
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } // Responsive font size
+            }}
+          >
             Our Projects
           </Typography>
           {loading ? (
-            <Box textAlign="center" py={4}><CircularProgress sx={{ color: '#D4AF37' }} /></Box>
+            <Box textAlign="center" py={{ xs: 3, sm: 4 }}><CircularProgress sx={{ color: '#D4AF37' }} /></Box>
           ) : (
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}> {/* Responsive spacing */}
               {displayProjects.map((project, index) => (
-                <Grid item xs={12} md={4} key={project._id}>
+                <Grid item xs={12} sm={6} md={4} key={project._id}> {/* Responsive grid columns */}
                   <Card sx={{ 
                     height: '100%', 
                     display: 'flex', 
@@ -489,7 +770,9 @@ const HomePage = () => {
                     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                     transition: 'transform 0.3s ease',
                     position: 'relative',
-                    '&:hover': { transform: 'translateY(-8px)' }
+                    '&:hover': { 
+                      transform: { xs: 'none', sm: 'translateY(-8px)' } // No hover effect on mobile
+                    }
                   }}>
                     { !project.isStatic && (
                       <Chip 
@@ -501,21 +784,55 @@ const HomePage = () => {
                     )}
                     <CardMedia
                       component="img"
-                      height="200"
+                      height={{ xs: '160', sm: '180', md: '200' }} // Responsive heights
                       image={project.image || '/images/placeholder-project.jpg'}
                       alt={project.title}
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
-                      <Chip label={project.category} size="small" sx={{ mb: 1, backgroundColor: '#01234B', color: 'white' }} />
-                      <Typography gutterBottom variant="h5" component="h3" sx={{ color: '#01234B', fontWeight: 600 }}>
+                      <Chip 
+                        label={project.category} 
+                        size="small" 
+                        sx={{ 
+                          mb: 1, 
+                          backgroundColor: '#01234B', 
+                          color: 'white',
+                          fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
+                        }} 
+                      />
+                      <Typography 
+                        gutterBottom 
+                        variant="h5" 
+                        component="h3" 
+                        sx={{ 
+                          color: '#01234B', 
+                          fontWeight: 600,
+                          fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } // Responsive font size
+                        }}
+                      >
                         {project.title}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#4A4A4A' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          color: '#4A4A4A',
+                          fontSize: { xs: '0.8rem', sm: '0.85rem' } // Responsive font size
+                        }}
+                      >
                         {project.description?.substring(0, 100)}...
                       </Typography>
                     </CardContent>
-                    <Box p={2} pt={0}>
-                      <Button component={Link} to="/projects" fullWidth variant="outlined" sx={{ color: '#01234B', borderColor: '#01234B' }}>
+                    <Box p={{ xs: 1.5, sm: 2 }} pt={0}>
+                      <Button 
+                        component={Link} 
+                        to="/projects" 
+                        fullWidth 
+                        variant="outlined" 
+                        sx={{ 
+                          color: '#01234B', 
+                          borderColor: '#01234B',
+                          fontSize: { xs: '0.8rem', sm: '0.9rem' } // Responsive font size
+                        }}
+                      >
                         Learn More
                       </Button>
                     </Box>
@@ -524,7 +841,7 @@ const HomePage = () => {
               ))}
             </Grid>
           )}
-          <Box textAlign="center" mt={6}>
+          <Box textAlign="center" mt={{ xs: 4, sm: 6 }}>
             <Button 
               className="text-fade-in-up"
               style={{ animationDelay: '0.5s' }}
@@ -535,10 +852,12 @@ const HomePage = () => {
               sx={{ 
                 backgroundColor: '#D4AF37', 
                 color: '#01234B',
-                px: 4,
+                px: { xs: 3, sm: 4 }, // Responsive padding
+                py: { xs: 1, sm: 1.2 }, // Responsive padding
                 '&:hover': {
                   backgroundColor: '#b8972d',
-                }
+                },
+                fontSize: { xs: '0.9rem', sm: '1rem' } // Responsive font size
               }}
             >
               View All Projects

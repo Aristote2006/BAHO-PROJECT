@@ -1,14 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import { CssBaseline } from '@mui/material';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import WhatWeDoPage from './pages/WhatWeDoPage';
-import EventsPage from './pages/EventsPage';
-import ProjectDetailPage from './pages/ProjectDetailPage';
 import ProjectsPage from './pages/ProjectsPage';
-import MilestonesPage from './pages/MilestonesPage';
+import EventsPage from './pages/EventsPage';
 import TeamPage from './pages/TeamPage';
 import ContactPage from './pages/ContactPage';
 import LoginPage from './pages/LoginPage';
@@ -19,154 +18,118 @@ import DeploymentTestPage from './pages/DeploymentTestPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { AuthProvider } from './contexts/AuthContext';
 
-// Define the theme with dark-blue minimalist business colors
+// Custom responsive theme
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#01234B', // Brand Primary Color
+      main: '#01234B', // Dark blue
     },
     secondary: {
-      main: '#D4AF37', // Soft gold accent
+      main: '#D4AF37', // Gold
     },
     background: {
-      default: '#FFFFFF', // White background
-      paper: '#FFFFFF',
-    },
-    text: {
-      primary: '#01234B', // Brand Primary Color text
-      secondary: '#4A4A4A', // Dark grey text
+      default: '#FFFFFF',
     },
   },
   typography: {
-    fontFamily: [
-      '"Bookman Old Style"',
-      'Bookman',
-      'serif'
-    ].join(','),
+    fontFamily: '"Bookman Old Style", "Bookman", "Georgia", "Times New Roman", serif',
     h1: {
-      fontSize: '2.5rem',
+      fontSize: '3rem',
       fontWeight: 700,
-      lineHeight: 1.2,
-      color: '#01234B',
-      '@media (min-width:600px)': {
-        fontSize: '3rem',
+      '@media (max-width: 960px)': {
+        fontSize: '2.2rem',
+      },
+      '@media (max-width: 600px)': {
+        fontSize: '1.8rem',
       },
     },
     h2: {
-      fontSize: '2rem',
+      fontSize: '2.5rem',
       fontWeight: 600,
-      lineHeight: 1.3,
-      color: '#01234B',
-      '@media (min-width:600px)': {
-        fontSize: '2.5rem',
+      '@media (max-width: 960px)': {
+        fontSize: '2rem',
+      },
+      '@media (max-width: 600px)': {
+        fontSize: '1.6rem',
       },
     },
     h3: {
-      fontSize: '1.75rem',
+      fontSize: '2rem',
       fontWeight: 600,
-      lineHeight: 1.4,
-      color: '#01234B',
-      '@media (min-width:600px)': {
-        fontSize: '2rem',
+      '@media (max-width: 960px)': {
+        fontSize: '1.7rem',
       },
-    },
-    h4: {
-      fontSize: '1.25rem',
-      fontWeight: 500,
-      lineHeight: 1.5,
-      color: '#01234B',
-      '@media (min-width:600px)': {
-        fontSize: '1.5rem',
+      '@media (max-width: 600px)': {
+        fontSize: '1.4rem',
       },
-    },
-    h5: {
-      fontSize: '1.1rem',
-      color: '#01234B',
-      '@media (min-width:600px)': {
-        fontSize: '1.25rem',
-      },
-    },
-    body1: {
-      color: '#01234B',
-    },
-    body2: {
-      color: '#01234B',
     },
   },
   components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          '@media (max-width: 600px)': {
+            paddingLeft: '16px',
+            paddingRight: '16px',
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          textTransform: 'none',
-          fontWeight: 600,
-          padding: '10px 24px',
+          '@media (max-width: 600px)': {
+            padding: '10px 16px',
+            fontSize: '0.9rem',
+          },
         },
       },
     },
   },
 });
 
-// Component to conditionally render Navbar based on route
-const ConditionalNavbar = () => {
-  const location = useLocation();
-  const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/profile');
+// Main App Component with responsive layout
+const AppContent = () => {
+  const { isAuthenticated } = useAuth();
   
-  // Don't render Navbar on admin dashboard and profile page
-  if (isAdminRoute) {
-    return null;
-  }
-  
-  return <Navbar />;
-};
-
-// Component to conditionally render Footer based on route
-const ConditionalFooter = () => {
-  const location = useLocation();
-  const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/profile');
-  
-  // Don't render Footer on admin dashboard and profile page
-  if (isAdminRoute) {
-    return null;
-  }
-  
-  return <Footer />;
-};
-
-function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
-        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <ConditionalNavbar />
-            <div style={{ flex: 1 }}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/what-we-do" element={<WhatWeDoPage />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/projects/:id" element={<ProjectDetailPage />} />
-                <Route path="/events" element={<EventsPage />} />
-                <Route path="/milestones" element={<MilestonesPage />} />
-                <Route path="/team" element={<TeamPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-                <Route path="/deployment-test" element={<DeploymentTestPage />} />
-                <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-              </Routes>
-            </div>
-            <ConditionalFooter />
-          </div>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+      <main style={{ 
+        flex: 1, 
+        paddingTop: '64px', // Account for fixed navbar height
+      }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/what-we-do" element={<WhatWeDoPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/team" element={<TeamPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/deployment-test" element={<DeploymentTestPage />} />
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
   );
-}
+};
 
-export default App;
+// Theme Provider Wrapper
+const ThemedApp = () => (
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
+  </ThemeProvider>
+);
+
+export default ThemedApp;

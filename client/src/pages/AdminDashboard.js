@@ -427,7 +427,7 @@ const AdminDashboard = () => {
               border: '1px solid rgba(212, 175, 55, 0.3)',
               transition: 'transform 0.3s ease',
               '&:hover': {
-                transform: 'translateY(-5px)'
+                transform: { xs: 'none', sm: 'translateY(-5px)' } // No hover effect on mobile
               }
             }}>
               <CardContent sx={{ textAlign: 'center', py: 3 }}>
@@ -451,7 +451,7 @@ const AdminDashboard = () => {
               border: '1px solid rgba(212, 175, 55, 0.3)',
               transition: 'transform 0.3s ease',
               '&:hover': {
-                transform: 'translateY(-5px)'
+                transform: { xs: 'none', sm: 'translateY(-5px)' } // No hover effect on mobile
               }
             }}>
               <CardContent sx={{ textAlign: 'center', py: 3 }}>
@@ -475,7 +475,7 @@ const AdminDashboard = () => {
               border: '1px solid rgba(212, 175, 55, 0.3)',
               transition: 'transform 0.3s ease',
               '&:hover': {
-                transform: 'translateY(-5px)'
+                transform: { xs: 'none', sm: 'translateY(-5px)' } // No hover effect on mobile
               }
             }}>
               <CardContent sx={{ textAlign: 'center', py: 3 }}>
@@ -552,48 +552,48 @@ const AdminDashboard = () => {
                 
                 <Grid container spacing={3}>
                   {events.map(event => (
-                    <Grid item xs={12} md={6} key={event.id}>
+                    <Grid item xs={12} sm={6} key={event.id}>
                       <Card sx={{ 
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(212, 175, 55, 0.3)',
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                          transform: 'scale(1.02)',
+                          transform: { xs: 'none', sm: 'scale(1.02)' }, // No hover effect on mobile
                           boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)'
                         }
                       }}>
                         <CardContent>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600 }}>
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word' }}>
                               {event.title}
                             </Typography>
-                            <Box>
-                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', mr: 1 }}>
+                            <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
+                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 1 }}>
                                 Edit
                               </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b' }} onClick={() => handleDeleteEvent(event._id)}>
+                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 1 }} onClick={() => handleDeleteEvent(event._id)}>
                                 Delete
                               </Button>
                             </Box>
                           </Box>
                           
-                          <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                          <Typography variant="body2" sx={{ mb: 2, color: '#ccc', wordBreak: 'break-word' }}>
                             {event.description}
                           </Typography>
                           
                           <Grid container spacing={1}>
                             <Grid item xs={6}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
                                 📅 {new Date(event.scope.startDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
                                 ⏰ {event.time}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
                                 📍 {event.location}
                               </Typography>
                             </Grid>
@@ -650,43 +650,43 @@ const AdminDashboard = () => {
                 
                 <Grid container spacing={3}>
                   {projects.map(project => (
-                    <Grid item xs={12} md={6} key={project.id}>
+                    <Grid item xs={12} sm={6} key={project.id}>
                       <Card sx={{ 
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(212, 175, 55, 0.3)',
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                          transform: 'scale(1.02)',
+                          transform: { xs: 'none', sm: 'scale(1.02)' }, // No hover effect on mobile
                           boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)'
                         }
                       }}>
                         <CardContent>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600 }}>
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word' }}>
                               {project.title}
                             </Typography>
-                            <Box>
-                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', mr: 1 }}>
+                            <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
+                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 1 }}>
                                 Edit
                               </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b' }} onClick={() => handleDeleteProject(project._id)}>
+                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 1 }} onClick={() => handleDeleteProject(project._id)}>
                                 Delete
                               </Button>
                             </Box>
                           </Box>
                           
-                          <Typography variant="body2" sx={{ mb: 2, color: '#ccc' }}>
+                          <Typography variant="body2" sx={{ mb: 2, color: '#ccc', wordBreak: 'break-word' }}>
                             {project.description}
                           </Typography>
                           
                           <Grid container spacing={1}>
                             <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
                                 📅 Scope: {new Date(project.scope.startDate).toLocaleDateString()} - {new Date(project.scope.endDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
                                 👤 Leader: {project.leader}
                               </Typography>
                             </Grid>

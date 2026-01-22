@@ -182,7 +182,8 @@ const RegisterPage = () => {
             borderRadius: 3,
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
             width: '100%',
-            maxWidth: '500px'
+            maxWidth: { xs: '95vw', sm: '500px' },
+            mx: 'auto'
           }}
         >
           {/* Logo Section */}

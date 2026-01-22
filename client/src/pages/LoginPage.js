@@ -175,7 +175,8 @@ const LoginPage = () => {
             borderRadius: 3,
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
             width: '100%',
-            maxWidth: '400px'
+            maxWidth: { xs: '95vw', sm: '400px' },
+            mx: 'auto'
           }}
         >
           {/* Logo Section */}

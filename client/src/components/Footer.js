@@ -1,134 +1,155 @@
 import React from 'react';
 import { Box, Container, Grid, Typography, Link, IconButton } from '@mui/material';
-import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
+import { Facebook, Twitter, Instagram, YouTube, LinkedIn } from '@mui/icons-material';
 
 const Footer = () => {
   return (
-    <Box
-      component="footer"
-      sx={{
-        backgroundColor: '#01234B', // Brand Primary Color
-        color: 'white',
-        py: 6,
-        mt: 'auto',
+    <Box 
+      component="footer" 
+      sx={{ 
+        backgroundColor: '#01234B', 
+        color: 'white', 
+        py: { xs: 4, sm: 6 }, // Responsive padding
+        mt: 'auto' 
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#D4AF37' }}>
-              BAHO AFRICA
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2, color: '#e0e0e0' }}>
-              Creative and Culture Hub based in Rwanda, empowering youth, artists, refugees, women, and creatives with disabilities through arts, innovation, culture, entrepreneurship, and education.
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <IconButton 
-                href="#" 
-                sx={{ color: 'white', '&:hover': { color: '#D4AF37' } }}
-              >
-                <Facebook />
-              </IconButton>
-              <IconButton 
-                href="#" 
-                sx={{ color: 'white', '&:hover': { color: '#D4AF37' } }}
-              >
-                <Twitter />
-              </IconButton>
-              <IconButton 
-                href="#" 
-                sx={{ color: 'white', '&:hover': { color: '#D4AF37' } }}
-              >
-                <Instagram />
-              </IconButton>
-              <IconButton 
-                href="#" 
-                sx={{ color: 'white', '&:hover': { color: '#D4AF37' } }}
-              >
-                <LinkedIn />
-              </IconButton>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#D4AF37' }}>
-              Quick Links
-            </Typography>
-            <Box>
-              <Link href="/" color="inherit" underline="hover" display="block" sx={{ mb: 1 }}>
-                Home
-              </Link>
-              <Link href="/about" color="inherit" underline="hover" display="block" sx={{ mb: 1 }}>
-                About
-              </Link>
-              <Link href="/what-we-do" color="inherit" underline="hover" display="block" sx={{ mb: 1 }}>
-                What We Do
-              </Link>
-              <Link href="/projects" color="inherit" underline="hover" display="block" sx={{ mb: 1 }}>
-                Projects
-              </Link>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#D4AF37' }}>
-              Contact Info
-            </Typography>
-            <Box>
-              <Typography variant="body2" sx={{ mb: 1, color: '#e0e0e0' }}>
-                Northern Province, Musanze, Rwanda
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 1, color: '#e0e0e0' }}>
-                Phone: +250 782 558 395
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 1, color: '#e0e0e0' }}>
-                Email: bahoafrica@gmail.com
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#D4AF37' }}>
-              Newsletter
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2, color: '#e0e0e0' }}>
-              Subscribe to our newsletter for updates and news.
-            </Typography>
-            <Box sx={{ display: 'flex' }}>
-              <input
-                type="email"
-                placeholder="Your email"
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: '4px 0 0 4px',
-                  border: 'none',
-                  outline: 'none',
-                  width: '100%'
+        <Grid container spacing={{ xs: 3, sm: 4 }} justifyContent="space-between"> {/* Responsive spacing */}
+          {/* Left Column - Logo and Description */}
+          <Grid item xs={12} sm={4}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', sm: 'flex-start' } }}>
+              <Box
+                component="img"
+                src="/images/BAHO_BRAND_yellow.png"
+                alt="BAHO AFRICA Logo"
+                sx={{
+                  height: { xs: '50px', sm: '60px', md: '70px' }, // Responsive logo size
+                  width: 'auto',
+                  mb: 2
                 }}
               />
-              <button
-                style={{
-                  backgroundColor: '#D4AF37',
-                  color: '#01234B',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '0 4px 4px 0',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: '#D4AF37', 
+                  textAlign: { xs: 'center', sm: 'left' }, // Center on mobile
+                  fontSize: { xs: '0.8rem', sm: '0.9rem' } // Responsive font size
                 }}
               >
-                Join
-              </button>
+                Empowering Talent, Inspiring Africa
+              </Typography>
             </Box>
           </Grid>
+
+          {/* Center Column - Quick Links */}
+          <Grid item xs={12} sm={4}>
+            <Typography 
+              variant="h6" 
+              gutterBottom 
+              sx={{ 
+                color: '#D4AF37', 
+                mb: 2, // Reduced margin
+                fontSize: { xs: '1rem', sm: '1.2rem' } // Responsive font size
+              }}
+            >
+              Quick Links
+            </Typography>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' }, gap: 1 }}> {/* Responsive grid */}
+              {[
+                { text: 'Home', path: '/' },
+                { text: 'About', path: '/about' },
+                { text: 'Projects', path: '/projects' },
+                { text: 'Events', path: '/events' },
+                { text: 'Team', path: '/team' },
+                { text: 'Contact', path: '/contact' },
+              ].map((link, index) => (
+                <Link
+                  key={index}
+                  href={link.path}
+                  sx={{
+                    color: 'white',
+                    textDecoration: 'none',
+                    fontSize: { xs: '0.8rem', sm: '0.9rem' }, // Responsive font size
+                    '&:hover': {
+                      color: '#D4AF37',
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  {link.text}
+                </Link>
+              ))}
+            </Box>
+          </Grid>
+
+          {/* Right Column - Contact Info and Social Media */}
+          <Grid item xs={12} sm={4}>
+            <Typography 
+              variant="h6" 
+              gutterBottom 
+              sx={{ 
+                color: '#D4AF37', 
+                mb: 2, // Reduced margin
+                fontSize: { xs: '1rem', sm: '1.2rem' } // Responsive font size
+              }}
+            >
+              Connect With Us
+            </Typography>
+            
+            {/* Social Media Icons */}
+            <Box sx={{ display: 'flex', gap: 1, mb: 2, justifyContent: { xs: 'center', sm: 'flex-start' } }}> {/* Center on mobile */}
+              {[Facebook, Twitter, Instagram, YouTube, LinkedIn].map((Icon, index) => (
+                <IconButton
+                  key={index}
+                  href="#"
+                  sx={{
+                    color: 'white',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    '&:hover': {
+                      backgroundColor: '#D4AF37',
+                      transform: { xs: 'none', sm: 'scale(1.1)' }, // No scale on mobile
+                    },
+                    width: { xs: 36, sm: 40 }, // Responsive size
+                    height: { xs: 36, sm: 40 },
+                  }}
+                >
+                  <Icon sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }} /> {/* Responsive icon size */}
+                </IconButton>
+              ))}
+            </Box>
+            
+            {/* Contact Info */}
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                fontSize: { xs: '0.7rem', sm: '0.8rem' }, // Responsive font size
+                textAlign: { xs: 'center', sm: 'left' } // Center on mobile
+              }}
+            >
+              Kigali, Rwanda<br />
+              Email: info@bahoafrica.org<br />
+              Phone: +250 788 888 888
+            </Typography>
+          </Grid>
         </Grid>
-        <Box
-          sx={{
-            borderTop: '1px solid #444',
-            mt: 4,
-            pt: 3,
-            textAlign: 'center'
+
+        {/* Bottom Section */}
+        <Box 
+          sx={{ 
+            borderTop: '1px solid rgba(255, 255, 255, 0.2)', 
+            mt: { xs: 3, sm: 4 }, // Responsive margin
+            pt: { xs: 2, sm: 3 }, // Responsive padding
+            textAlign: 'center' 
           }}
         >
-          <Typography variant="body2" sx={{ color: '#bbbbbb' }}>
-            &copy; {new Date().getFullYear()} BAHO AFRICA. All rights reserved. Empowering Talent, Inspiring Africa.
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: 'rgba(255, 255, 255, 0.7)', 
+              fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
+            }}
+          >
+            © {new Date().getFullYear()} BAHO AFRICA. All rights reserved.
           </Typography>
         </Box>
       </Container>

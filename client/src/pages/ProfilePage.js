@@ -343,7 +343,7 @@ const ProfilePage = () => {
 
         <Grid container spacing={4}>
           {/* Profile Information Card */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ 
               background: 'linear-gradient(135deg, #01234B 0%, #0a3666 100%)', 
               color: 'white',
@@ -461,7 +461,7 @@ const ProfilePage = () => {
           </Grid>
 
           {/* Settings Card */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ 
               background: 'linear-gradient(135deg, #415A77 0%, #0a3666 100%)', 
               color: 'white',
