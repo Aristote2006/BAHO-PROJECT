@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Button, Grid, Paper, Card, CardContent, CardMedia, Chip, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { ArrowForward, CalendarToday, LocationOn, AccessTime } from '@mui/icons-material';
+import { ArrowForward, CalendarToday, LocationOn } from '@mui/icons-material';
 import { eventService, projectService } from '../services/apiService';
 import { STATIC_PROJECTS, STATIC_EVENTS } from '../constants/staticData';
 
@@ -37,7 +37,7 @@ const HeroSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const SlideshowImage = styled(Box)(({ src }) => ({
+const SlideshowImage = styled(Box)(({ theme, src }) => ({
   position: 'absolute',
   top: 0,
   left: 0,
