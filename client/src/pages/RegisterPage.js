@@ -73,9 +73,45 @@ const RegisterPage = () => {
       }
       
       if (response.ok) {
+        console.log('Full response data structure:', data);
+        
+        // Extract user data safely - handle different response structures
+        let userData, token;
+        
+        // Case 1: Standard structure { message, token, user }
+        if (data.user && data.token) {
+          userData = data.user;
+          token = data.token;
+        } 
+        // Case 2: Direct structure { id, firstName, lastName, email, isAdmin, token }
+        else if (data.id && data.token) {
+          userData = {
+            id: data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            isAdmin: data.isAdmin !== undefined ? data.isAdmin : true
+          };
+          token = data.token;
+        }
+        // Case 3: Something else - try to extract what we can
+        else {
+          console.warn('Unexpected response structure:', data);
+          userData = data;
+          token = data.token || '';
+        }
+        
+        // Validate required fields
+        if (!userData || !userData.id) {
+          throw new Error('Invalid response: missing user data. Response structure: ' + JSON.stringify(data));
+        }
+        
+        console.log('Extracted user data:', userData);
+        console.log('Extracted token:', token);
+        
         // Store token and user info in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
         
         // Redirect to admin dashboard (all users are admins)
         navigate('/admin');
