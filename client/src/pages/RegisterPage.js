@@ -38,16 +38,38 @@ const RegisterPage = () => {
       console.log('Register response headers:', Object.fromEntries(response.headers.entries()));
       
       let data;
-      const contentType = response.headers.get("content-type");
-      console.log('Content-Type:', contentType);
-      
-      if (contentType && contentType.indexOf("application/json") !== -1) {
-        data = await response.json();
-        console.log('Register response data:', data);
+      // Check if the response has parsed data from our service, otherwise parse manually
+      if (response.parsedData) {
+        data = response.parsedData;
+        console.log('Using pre-parsed data:', data);
       } else {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        throw new Error(`Server returned ${response.status}: ${text.substring(0, 200) || 'Unknown error'}`);
+        const contentType = response.headers.get("content-type");
+        console.log('Content-Type:', contentType);
+        
+        if (contentType && contentType.includes("application/json")) {
+          data = await response.json();
+          console.log('Register response data:', data);
+        } else {
+          // If not JSON, try to get text response for debugging
+          const text = await response.text();
+          console.log('Non-JSON response text:', text);
+          
+          // Create a more informative error message
+          let errorMessage = `Server returned ${response.status}: `;
+          if (text && text.length > 0) {
+            // Extract error message from HTML if possible
+            const errorMatch = text.match(/<[^>]*error[^>]*>([^<]*)<\/[^>]*error[^>]*>|"message"[\s:]*"([^"]*)"|"error"[\s:]*"([^"]*)"/i);
+            if (errorMatch) {
+              errorMessage += errorMatch[1] || errorMatch[2] || errorMatch[3] || text.substring(0, 200);
+            } else {
+              errorMessage += text.substring(0, 200);
+            }
+          } else {
+            errorMessage += 'Empty response';
+          }
+          
+          throw new Error(errorMessage);
+        }
       }
       
       if (response.ok) {

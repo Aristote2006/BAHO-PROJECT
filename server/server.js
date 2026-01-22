@@ -19,6 +19,7 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -28,7 +29,7 @@ const projectRoutes = require('./routes/projects');
 const authRoutes = require('./routes/auth');
 const eventRoutes = require('./routes/events');
 
-// Use routes
+// Use API routes BEFORE serving static files
 app.use('/api/contacts', contactRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
@@ -38,6 +39,7 @@ app.use('/api/events', eventRoutes);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 
+  // This should come AFTER all API routes
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
   });
@@ -64,7 +66,20 @@ app.get('/health', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  
+  // Ensure JSON response for API routes
+  if (req.path.startsWith('/api/')) {
+    res.status(500).json({ 
+      message: 'Something went wrong!', 
+      error: process.env.NODE_ENV === 'production' ? undefined : err.message 
+    });
+  } else {
+    // For non-API routes, send JSON as well to maintain consistency
+    res.status(500).json({ 
+      message: 'Something went wrong!', 
+      error: process.env.NODE_ENV === 'production' ? undefined : err.message 
+    });
+  }
 });
 
 app.listen(PORT, () => {
