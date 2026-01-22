@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import { authService } from '../services/apiService';
 
 const AuthContext = createContext();
 
@@ -55,10 +56,22 @@ export const AuthProvider = ({ children }) => {
   const storedToken = localStorage.getItem('token');
   const storedUser = localStorage.getItem('user');
 
+  const parseStoredUser = (userStr) => {
+    if (!userStr || userStr === 'undefined' || userStr === 'null') {
+      return null;
+    }
+    try {
+      return JSON.parse(userStr);
+    } catch (error) {
+      console.error('Error parsing stored user:', error);
+      return null;
+    }
+  };
+
   const initialState = {
-    isAuthenticated: !!storedToken,
-    user: storedUser ? JSON.parse(storedUser) : null,
-    token: storedToken,
+    isAuthenticated: !!storedToken && storedToken !== 'undefined',
+    user: parseStoredUser(storedUser),
+    token: storedToken !== 'undefined' ? storedToken : null,
     loading: false,
     error: null
   };
@@ -67,12 +80,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is still authenticated when component mounts
-    if (storedToken && storedUser) {
+    if (storedToken && storedToken !== 'undefined' && storedUser && storedUser !== 'undefined') {
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: {
           token: storedToken,
-          user: JSON.parse(storedUser)
+          user: parseStoredUser(storedUser)
         }
       });
     }
@@ -82,15 +95,21 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await authService.login({ email, password });
 
-      const data = await response.json();
+      // Parse response using the same logic as in login page
+      let data;
+      if (response.parsedData) {
+        data = response.parsedData;
+      } else {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          data = { message: text.substring(0, 200), error: 'Non-JSON response' };
+        }
+      }
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
@@ -127,15 +146,21 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, email, password }),
-      });
+      const response = await authService.register({ firstName, lastName, email, password });
 
-      const data = await response.json();
+      // Parse response using the same logic as in register page
+      let data;
+      if (response.parsedData) {
+        data = response.parsedData;
+      } else {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          data = { message: text.substring(0, 200), error: 'Non-JSON response' };
+        }
+      }
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
