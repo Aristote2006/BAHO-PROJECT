@@ -83,13 +83,19 @@ const LoginPage = () => {
         // Case 3: Something else - try to extract what we can
         else {
           console.warn('Unexpected response structure:', data);
+          // If there's rawText in the response, it might contain error info
+          if (data.rawText) {
+            console.error('Raw response text:', data.rawText);
+            throw new Error('Server returned an unexpected response format. Raw response: ' + data.rawText.substring(0, 200));
+          }
           userData = data;
           token = data.token || '';
         }
         
         // Validate required fields
         if (!userData || !userData.id) {
-          throw new Error('Invalid response: missing user data. Response structure: ' + JSON.stringify(data));
+          console.error('Missing user data in response:', data);
+          throw new Error('Invalid response: missing user data. Expected user with id. Response structure: ' + JSON.stringify(data));
         }
         
         console.log('Extracted user data:', userData);
@@ -109,7 +115,17 @@ const LoginPage = () => {
           navigate('/');
         }
       } else {
-        setError(data.message || `Login failed (${response.status}): ${data.error || 'Unknown error'}`);
+        console.error('Login request failed with status:', response.status, 'and data:', data);
+        // If response is not ok, create an error message from the response
+        let errorMessage = `Login failed (${response.status})`;
+        if (data && data.message) {
+          errorMessage += ': ' + data.message;
+        } else if (data && data.rawText) {
+          errorMessage += '. Server response: ' + data.rawText.substring(0, 200);
+        } else {
+          errorMessage += '. Check server logs.';
+        }
+        setError(errorMessage);
       }
     } catch (err) {
       console.error('Login error details:', err);

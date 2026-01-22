@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
           data = await response.json();
         } else {
           const text = await response.text();
-          data = { message: text.substring(0, 200), error: 'Non-JSON response' };
+          data = { message: text.substring(0, 200), contentType: contentType, rawText: text };
         }
       }
 
@@ -158,7 +158,7 @@ export const AuthProvider = ({ children }) => {
           data = await response.json();
         } else {
           const text = await response.text();
-          data = { message: text.substring(0, 200), error: 'Non-JSON response' };
+          data = { message: text.substring(0, 200), contentType: contentType, rawText: text };
         }
       }
 

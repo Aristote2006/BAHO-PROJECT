@@ -10,17 +10,21 @@ const safeJsonParse = async (response) => {
   
   if (contentType && contentType.includes("application/json")) {
     try {
-      return await response.json();
+      const data = await response.json();
+      console.log('Successfully parsed JSON response:', data);
+      return data;
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       // Return text content if JSON parsing fails
       const text = await response.text();
-      return { message: `Parse error: ${text.substring(0, 200)}`, error: parseError.message };
+      console.log('Raw response text:', text);
+      return { message: `Parse error: ${text.substring(0, 200)}`, error: parseError.message, rawText: text };
     }
   } else {
     // If not JSON, return text content
     const text = await response.text();
-    return { message: text.substring(0, 500), contentType: contentType };
+    console.log('Non-JSON response text:', text);
+    return { message: text.substring(0, 500), contentType: contentType, rawText: text };
   }
 };
 
