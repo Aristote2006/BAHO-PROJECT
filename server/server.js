@@ -13,21 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 // CORS configuration - Allow all origins during development, restrict in production
 const corsOptions = {
-  origin: function (origin, callback) {
-    // In development, allow localhost origins
-    if (process.env.NODE_ENV !== 'production' || !origin) return callback(null, true);
-    
-    // In production, allow specific domains
-    const allowedOrigins = [
-      'https://bahoafricanew.onrender.com',
-      'https://www.bahoafricanew.onrender.com',
-      'https://your-frontend-domain.onrender.com',  // Add your actual frontend domain
-      'https://your-actual-frontend-url.com'        // Add your actual frontend URL
-    ];
-    
-    const isAllowed = allowedOrigins.some(allowed => origin?.includes(allowed));
-    callback(null, isAllowed);
-  },
+  origin: '*',  // Allow all origins in production for flexibility
   credentials: true
 };
 
@@ -92,11 +78,6 @@ if (process.env.NODE_ENV === 'production') {
 const connectDB = require('./config/db');
 connectDB();
 
-// Basic route
-app.get('/', (req, res) => {
-  res.json({ message: 'BAHO AFRICA API' });
-});
-
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
@@ -133,6 +114,11 @@ app.get('/health/db', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   }
+});
+
+// Basic route
+app.get('/', (req, res) => {
+  res.json({ message: 'BAHO AFRICA API' });
 });
 
 // Error handling middleware

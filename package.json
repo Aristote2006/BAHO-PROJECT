@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "description": "BAHO AFRICA Creative and Culture Hub Website",
   "main": "server/server.js",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
   "scripts": {
     "start": "node server/server.js",
     "server": "nodemon server/server.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "seed": "node seed-data.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
-    "postinstall": "npm install --prefix client"
+    "build": "npm install --prefix client && npm run build --prefix client",
+    "heroku-postbuild": "npm run build",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "concurrently": "^7.0.0",
