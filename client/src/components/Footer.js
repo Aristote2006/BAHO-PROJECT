@@ -128,7 +128,7 @@ const Footer = () => {
             >
               Kigali, Rwanda<br />
               Email: info@bahoafrica.org<br />
-              Phone: +250 788 888 888
+              Phone:  +250 782 558 395
             </Typography>
           </Grid>
         </Grid>

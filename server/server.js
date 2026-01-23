@@ -11,9 +11,24 @@ dns.setDefaultResultOrder('ipv4first');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration - Allow all origins during development, restrict in production
+// CORS configuration - Allow specific origins for production
 const corsOptions = {
-  origin: '*',  // Allow all origins in production for flexibility
+  origin: function (origin, callback) {
+    // In development, allow localhost origins
+    if (process.env.NODE_ENV !== 'production' || !origin) return callback(null, true);
+    
+    // In production, allow your specific frontend domain
+    const allowedOrigins = [
+      'https://bahoafricanew.onrender.com',  // Replace with your actual frontend URL
+      'https://your-actual-frontend-domain.com',  // Add your custom domain if you have one
+      'http://localhost:3000', // Allow local development
+      'http://localhost:3001', // Alternative local dev port
+      'http://localhost:8080'  // Another common dev port
+    ];
+    
+    const isAllowed = origin ? allowedOrigins.some(allowed => origin.includes(allowed)) : true;
+    callback(null, isAllowed);
+  },
   credentials: true
 };
 
@@ -44,24 +59,15 @@ app.get('/api/health/auth', (req, res) => {
   });
 });
 
-// Add a middleware to log API requests for debugging
-app.use('/api/*', (req, res, next) => {
-  console.log(`API Request: ${req.method} ${req.path}`);
-  console.log(`Headers:`, req.headers);
-  if (req.body && Object.keys(req.body).length > 0) {
-    console.log(`Body:`, req.body);
-  }
-  next();
-});
-
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
+  // Important: Define API routes BEFORE static middleware
   app.use(express.static(path.join(__dirname, '../client/build')));
 
   // Catch-all handler for SPA - but make sure API routes are not affected
   app.get('*', (req, res) => {
     // Ensure API routes are not caught by this handler
-    if (req.originalUrl.startsWith('/api/')) {
+    if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/health')) {
       // If we get here, it means an API route wasn't matched earlier
       res.status(404).json({ 
         error: 'API endpoint not found',
