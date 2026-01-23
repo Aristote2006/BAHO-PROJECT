@@ -17,10 +17,12 @@ const corsOptions = {
     // In development, allow localhost origins
     if (process.env.NODE_ENV !== 'production' || !origin) return callback(null, true);
     
-    // In production, only allow the specific Render URL
+    // In production, allow specific domains
     const allowedOrigins = [
       'https://bahoafricanew.onrender.com',
-      'https://www.bahoafricanew.onrender.com'
+      'https://www.bahoafricanew.onrender.com',
+      'https://your-frontend-domain.onrender.com',  // Add your actual frontend domain
+      'https://your-actual-frontend-url.com'        // Add your actual frontend URL
     ];
     
     const isAllowed = allowedOrigins.some(allowed => origin?.includes(allowed));
@@ -101,8 +103,36 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    message: 'Server is running and API is accessible',
+    endpoints: {
+      events: '/api/events',
+      projects: '/api/projects',
+      auth: '/api/auth',
+      contacts: '/api/contacts'
+    }
   });
+});
+
+// Additional health checks for specific services
+app.get('/health/db', async (req, res) => {
+  try {
+    // Check if MongoDB connection is alive
+    const dbState = mongoose.connection.readyState;
+    const dbStates = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+    
+    res.json({
+      status: dbState === 1 ? 'OK' : 'ERROR',
+      database: dbStates[dbState],
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Error handling middleware
