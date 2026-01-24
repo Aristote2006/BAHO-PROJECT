@@ -3,6 +3,7 @@ import { Container, Box, Typography, TextField, Button, Paper, Link, Grid, Alert
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import { authService } from '../services/apiService';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,8 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login: contextLogin, user } = useAuth();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,101 +20,14 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const response = await authService.login({ email, password });
+      // Use the context login function instead of direct API call
+      const result = await contextLogin(email, password);
       
-      // Log response for debugging
-      console.log('Login response status:', response.status);
-      console.log('Login response headers:', Object.fromEntries(response.headers.entries()));
-      
-      let data;
-      // Check if the response has parsed data from our service, otherwise parse manually
-      if (response.parsedData) {
-        data = response.parsedData;
-        console.log('Using pre-parsed data:', data);
-      } else {
-        const contentType = response.headers.get("content-type");
-        console.log('Content-Type:', contentType);
+      if (result.success) {
+        console.log('Login successful via context');
         
-        if (contentType && contentType.includes("application/json")) {
-          data = await response.json();
-          console.log('Login response data:', data);
-        } else {
-          // If not JSON, try to get text response for debugging
-          const text = await response.text();
-          console.log('Non-JSON response text:', text);
-          
-          // Create a more informative error message
-          let errorMessage = `Server returned ${response.status}: `;
-          if (text && text.length > 0) {
-            // Extract error message from HTML if possible
-            const errorMatch = text.match(/<[^>]*error[^>]*>([^<]*)<\/[^>]*error[^>]*>|"message"[\s:]*"([^"]*)"|"error"[\s:]*"([^"]*)"/i);
-            if (errorMatch) {
-              errorMessage += errorMatch[1] || errorMatch[2] || errorMatch[3] || text.substring(0, 200);
-            } else {
-              errorMessage += text.substring(0, 200);
-            }
-          } else {
-            errorMessage += 'Empty response';
-          }
-          
-          throw new Error(errorMessage);
-        }
-      }
-      
-      if (response.ok) {
-        console.log('Full response data structure:', data);
-        
-        // Extract user data safely - handle different response structures
-        let userData, token;
-        
-        // Case 1: Standard structure { message, token, user }
-        if (data.user && data.token) {
-          userData = data.user;
-          token = data.token;
-        } 
-        // Case 2: Direct structure { id, firstName, lastName, email, isAdmin, token }
-        else if (data.id && data.token) {
-          userData = {
-            id: data.id,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            isAdmin: data.isAdmin !== undefined ? data.isAdmin : true
-          };
-          token = data.token;
-        }
-        // Case 3: Something else - try to extract what we can
-        else {
-          console.warn('Unexpected response structure:', data);
-          // Check if this is an empty/invalid response
-          if (data.message === "" && data.contentType === null && data.rawText === "") {
-            console.error('Received empty/invalid response from server');
-            throw new Error('Server returned an empty response. This usually means the API endpoint is not accessible or the backend server is not running. Please check that your backend server is running and accessible.');
-          }
-          // If there's rawText in the response, it might contain error info
-          if (data.rawText && data.rawText.trim()) {
-            console.error('Raw response text:', data.rawText);
-            throw new Error('Server returned an unexpected response format. Raw response: ' + data.rawText.substring(0, 200));
-          }
-          userData = data;
-          token = data.token || '';
-        }
-        
-        // Validate required fields
-        if (!userData || !userData.id) {
-          console.error('Missing user data in response:', data);
-          throw new Error('Invalid response: missing user data. Expected user with id. Response structure: ' + JSON.stringify(data));
-        }
-        
-        console.log('Extracted user data:', userData);
-        console.log('Extracted token:', token);
-        
-        // Store token and user info in localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Redirect based on user role (default to admin since all users are admins)
-        const isAdmin = userData.isAdmin !== undefined ? userData.isAdmin : true;
+        // Determine redirect based on user role
+        const isAdmin = user?.isAdmin !== undefined ? user.isAdmin : true;
         console.log('User isAdmin status:', isAdmin);
         
         if (isAdmin) {
@@ -120,17 +36,7 @@ const LoginPage = () => {
           navigate('/');
         }
       } else {
-        console.error('Login request failed with status:', response.status, 'and data:', data);
-        // If response is not ok, create an error message from the response
-        let errorMessage = `Login failed (${response.status})`;
-        if (data && data.message) {
-          errorMessage += ': ' + data.message;
-        } else if (data && data.rawText) {
-          errorMessage += '. Server response: ' + data.rawText.substring(0, 200);
-        } else {
-          errorMessage += '. Check server logs.';
-        }
-        setError(errorMessage);
+        setError(result.message || 'Login failed');
       }
     } catch (err) {
       console.error('Login error details:', err);
