@@ -162,11 +162,11 @@ const Navbar = () => {
       elevation={0}
       sx={{ 
         backgroundColor: '#01234B', // Brand Primary Color
-        py: 1,
+        py: 0.5,  // Reduced vertical padding
         boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
+      <Toolbar sx={{ justifyContent: 'space-between', minHeight: '60px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
             <Box
@@ -174,7 +174,7 @@ const Navbar = () => {
               src="/images/BAHO_BRAND_yellow.png"
               alt="BAHO AFRICA Logo"
               sx={{
-                height: { xs: '70px', sm: '90px', md: '120px' }, // Further increased logo size
+                height: { xs: '50px', sm: '60px', md: '70px' }, // Reduced logo size slightly
                 width: 'auto'
               }}
             />
@@ -182,7 +182,7 @@ const Navbar = () => {
         </Box>
         
         {/* Desktop Navigation */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', flex: 1 }}>
           {desktopNavItems.map((item) => {
             if (item.isExternal) {
               return (
@@ -193,12 +193,12 @@ const Navbar = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   sx={{ 
-                    my: 2, 
+                    my: 1, 
                     color: 'white', 
                     display: 'block',
                     mx: 1,
                     fontWeight: 'bold',
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                    fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                     '&:hover': {
                       backgroundColor: 'rgba(212, 175, 55, 0.3)', // Soft gold accent
                     }
@@ -214,12 +214,12 @@ const Navbar = () => {
                   component={Link}
                   to={item.path}
                   sx={{ 
-                    my: 2, 
+                    my: 1, 
                     color: 'white', 
                     display: 'block',
                     mx: 1,
                     fontWeight: 'bold',
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                    fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                     '&:hover': {
                       backgroundColor: 'rgba(212, 175, 55, 0.3)', // Soft gold accent
                     }
@@ -237,12 +237,12 @@ const Navbar = () => {
                 component={Link}
                 to="/login"
                 sx={{ 
-                  my: 2, 
+                  my: 1, 
                   color: 'white', 
                   display: 'block',
                   mx: 1,
                   fontWeight: 'bold',
-                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                   '&:hover': {
                     backgroundColor: 'rgba(212, 175, 55, 0.3)',
                   }
@@ -254,12 +254,12 @@ const Navbar = () => {
                 component={Link}
                 to="/register"
                 sx={{ 
-                  my: 2, 
+                  my: 1, 
                   color: 'white', 
                   display: 'block',
                   mx: 1,
                   fontWeight: 'bold',
-                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                   '&:hover': {
                     backgroundColor: 'rgba(212, 175, 55, 0.3)',
                   }
@@ -274,12 +274,12 @@ const Navbar = () => {
                 component={Link}
                 to="/profile"
                 sx={{ 
-                  my: 2, 
+                  my: 1, 
                   color: 'white', 
                   display: 'block',
                   mx: 1,
                   fontWeight: 'bold',
-                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                   '&:hover': {
                     backgroundColor: 'rgba(212, 175, 55, 0.3)',
                   }
@@ -292,12 +292,12 @@ const Navbar = () => {
                   component={Link}
                   to="/admin"
                   sx={{ 
-                    my: 2, 
+                    my: 1, 
                     color: 'white', 
                     display: 'block',
                     mx: 1,
                     fontWeight: 'bold',
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                    fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                     '&:hover': {
                       backgroundColor: 'rgba(212, 175, 55, 0.3)',
                   }
@@ -309,12 +309,12 @@ const Navbar = () => {
               <Button
                 onClick={handleLogout}
                 sx={{ 
-                  my: 2, 
+                  my: 1, 
                   color: 'white', 
                   display: 'block',
                   mx: 1,
                   fontWeight: 'bold',
-                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
                   '&:hover': {
                     backgroundColor: 'rgba(212, 175, 55, 0.3)',
                   }
@@ -324,18 +324,39 @@ const Navbar = () => {
               </Button>
             </>
           )}
-        </Box>
-        
-        {/* Menu Button - Visible on all screen sizes */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* Menu Button - Positioned with other nav items */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="end"
             onClick={handleDrawerToggle}
-            sx={{ color: 'white' }}
+            sx={{ 
+              color: 'white',
+              ml: 1,
+              '&:hover': {
+                backgroundColor: 'rgba(212, 175, 55, 0.3)',
+              }
+            }}
           >
-            <MenuIcon sx={{ color: 'white' }} />
+            <MenuIcon sx={{ fontSize: '1.8rem', color: 'white' }} />
+          </IconButton>
+        </Box>
+        
+        {/* Mobile Menu Button */}
+        <Box sx={{ display: { xs: 'flex', sm: 'flex', md: 'none' }, alignItems: 'center' }}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="end"
+            onClick={handleDrawerToggle}
+            sx={{ 
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(212, 175, 55, 0.3)',
+              }
+            }}
+          >
+            <MenuIcon sx={{ fontSize: '1.8rem', color: 'white' }} />
           </IconButton>
         </Box>
       </Toolbar>
