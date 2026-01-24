@@ -20,7 +20,28 @@ const Navbar = () => {
   };
 
   // Conditionally render navItems based on authentication status
-  const navItems = [
+  const allNavItems = [
+    { text: 'Home', path: '/' },
+    { text: 'About', path: '/about' },
+    { text: 'What We Do', path: '/what-we-do' },
+    { text: 'Projects', path: '/projects' },
+    { text: 'Events', path: '/events' },
+    { text: 'Milestones', path: '/milestones' },
+    { text: 'Team', path: '/team' },
+    { text: 'Gallery', path: 'https://drive.google.com/drive/folders/1_Cd8PJavkutn-_uON063UuCmAqkaDSBN?usp=drive_link', isExternal: true },
+    { text: 'Contact', path: '/contact' },
+  ];
+
+  // Public navigation items to show on desktop
+  const desktopNavItems = [
+    { text: 'Home', path: '/' },
+    { text: 'Projects', path: '/projects' },
+    { text: 'Events', path: '/events' },
+    { text: 'Contact', path: '/contact' },
+  ];
+
+  // Items to show in the mobile menu
+  const mobileNavItems = [
     { text: 'Home', path: '/' },
     { text: 'About', path: '/about' },
     { text: 'What We Do', path: '/what-we-do' },
@@ -34,31 +55,45 @@ const Navbar = () => {
 
   // Add login/register or user profile/logout items
   if (!isAuthenticated) {
-    navItems.push(
+    mobileNavItems.push(
       { text: 'Login', path: '/login' },
       { text: 'Register', path: '/register' }
     );
   } else {
     // If user is authenticated and admin, show Dashboard link
     if (user?.isAdmin) {
-      navItems.push({ text: 'Dashboard', path: '/admin' });
+      mobileNavItems.push({ text: 'Dashboard', path: '/admin' });
     }
-    navItems.push({ text: `Welcome, ${user?.firstName}`, path: '/profile' });
-    navItems.push({ text: 'Logout', path: '#', onClick: handleLogout });
+    mobileNavItems.push({ text: `Welcome, ${user?.firstName}`, path: '/profile' });
+    mobileNavItems.push({ text: 'Logout', path: '#', onClick: handleLogout });
   };
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <List>
-        {navItems.map((item) => {
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', height: '100%' }}>
+      <List sx={{ pt: 4 }}>
+        {mobileNavItems.map((item) => {
           if (item.onClick) {
             return (
               <ListItem 
                 key={item.text}
                 onClick={item.onClick}
-                sx={{ padding: '12px 24px', cursor: 'pointer' }}
+                sx={{ 
+                  padding: '16px 24px', 
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                  }
+                }}
               >
-                <ListItemText primary={item.text} sx={{ textAlign: 'center' }} />
+                <ListItemText 
+                  primary={item.text} 
+                  sx={{ 
+                    textAlign: 'center', 
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem'
+                  }} 
+                />
               </ListItem>
             );
           } else if (item.isExternal) {
@@ -69,9 +104,25 @@ const Navbar = () => {
                 href={item.path}
                 target="_blank"
                 rel="noopener noreferrer"
-                sx={{ padding: '12px 24px', cursor: 'pointer', color: 'inherit', textDecoration: 'none' }}
+                sx={{ 
+                  padding: '16px 24px', 
+                  cursor: 'pointer', 
+                  color: 'white', 
+                  textDecoration: 'none',
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                  }
+                }}
               >
-                <ListItemText primary={item.text} sx={{ textAlign: 'center' }} />
+                <ListItemText 
+                  primary={item.text} 
+                  sx={{ 
+                    textAlign: 'center', 
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem'
+                  }} 
+                />
               </ListItem>
             );
           } else {
@@ -80,9 +131,23 @@ const Navbar = () => {
                 key={item.text}
                 component={Link}
                 to={item.path}
-                sx={{ padding: '12px 24px', cursor: 'default' }}
+                sx={{ 
+                  padding: '16px 24px', 
+                  cursor: 'default',
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                  }
+                }}
               >
-                <ListItemText primary={item.text} sx={{ textAlign: 'center' }} />
+                <ListItemText 
+                  primary={item.text} 
+                  sx={{ 
+                    textAlign: 'center', 
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem'
+                  }} 
+                />
               </ListItem>
             );
           }
@@ -109,7 +174,7 @@ const Navbar = () => {
               src="/images/BAHO_BRAND_yellow.png"
               alt="BAHO AFRICA Logo"
               sx={{
-                height: { xs: '50px', sm: '70px' },
+                height: { xs: '70px', sm: '90px', md: '120px' }, // Further increased logo size
                 width: 'auto'
               }}
             />
@@ -118,27 +183,8 @@ const Navbar = () => {
         
         {/* Desktop Navigation */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-          {navItems.map((item) => {
-            if (item.onClick) {
-              return (
-                <Button
-                  key={item.text}
-                  onClick={item.onClick}
-                  sx={{ 
-                    my: 2, 
-                    color: 'white', 
-                    display: 'block',
-                    mx: 1,
-                    cursor: 'pointer',
-                    '&:hover': {
-                      backgroundColor: 'rgba(212, 175, 55, 0.3)', // Soft gold accent
-                    }
-                  }}
-                >
-                  {item.text}
-                </Button>
-              );
-            } else if (item.isExternal) {
+          {desktopNavItems.map((item) => {
+            if (item.isExternal) {
               return (
                 <Button
                   key={item.text}
@@ -151,6 +197,8 @@ const Navbar = () => {
                     color: 'white', 
                     display: 'block',
                     mx: 1,
+                    fontWeight: 'bold',
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
                     '&:hover': {
                       backgroundColor: 'rgba(212, 175, 55, 0.3)', // Soft gold accent
                     }
@@ -170,6 +218,8 @@ const Navbar = () => {
                     color: 'white', 
                     display: 'block',
                     mx: 1,
+                    fontWeight: 'bold',
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
                     '&:hover': {
                       backgroundColor: 'rgba(212, 175, 55, 0.3)', // Soft gold accent
                     }
@@ -180,10 +230,104 @@ const Navbar = () => {
               );
             }
           })}
+          {/* Show login/register/profile based on auth status */}
+          {!isAuthenticated ? (
+            <>
+              <Button
+                component={Link}
+                to="/login"
+                sx={{ 
+                  my: 2, 
+                  color: 'white', 
+                  display: 'block',
+                  mx: 1,
+                  fontWeight: 'bold',
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.3)',
+                  }
+                }}
+              >
+                Login
+              </Button>
+              <Button
+                component={Link}
+                to="/register"
+                sx={{ 
+                  my: 2, 
+                  color: 'white', 
+                  display: 'block',
+                  mx: 1,
+                  fontWeight: 'bold',
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.3)',
+                  }
+                }}
+              >
+                Register
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                component={Link}
+                to="/profile"
+                sx={{ 
+                  my: 2, 
+                  color: 'white', 
+                  display: 'block',
+                  mx: 1,
+                  fontWeight: 'bold',
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.3)',
+                  }
+                }}
+              >
+                Profile
+              </Button>
+              {user?.isAdmin && (
+                <Button
+                  component={Link}
+                  to="/admin"
+                  sx={{ 
+                    my: 2, 
+                    color: 'white', 
+                    display: 'block',
+                    mx: 1,
+                    fontWeight: 'bold',
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                    '&:hover': {
+                      backgroundColor: 'rgba(212, 175, 55, 0.3)',
+                  }
+                }}
+              >
+                Dashboard
+              </Button>
+              )}
+              <Button
+                onClick={handleLogout}
+                sx={{ 
+                  my: 2, 
+                  color: 'white', 
+                  display: 'block',
+                  mx: 1,
+                  fontWeight: 'bold',
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  '&:hover': {
+                    backgroundColor: 'rgba(212, 175, 55, 0.3)',
+                  }
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          )}
         </Box>
         
-        {/* Mobile Menu Button */}
-        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {/* Menu Button - Visible on all screen sizes */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -191,7 +335,7 @@ const Navbar = () => {
             onClick={handleDrawerToggle}
             sx={{ color: 'white' }}
           >
-            <MenuIcon />
+            <MenuIcon sx={{ color: 'white' }} />
           </IconButton>
         </Box>
       </Toolbar>
@@ -199,18 +343,20 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
+        anchor="right"  // Change anchor to right side
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
         }}
         sx={{
-          display: { xs: 'block', md: 'none' },
+          display: { xs: 'block', md: 'block' },  // Show on all screen sizes
           '& .MuiDrawer-paper': { 
             boxSizing: 'border-box', 
-            width: 240,
+            width: { xs: '80%', sm: '300px', md: '350px' },  // Different widths for different screen sizes
             backgroundColor: '#01234B',
             color: 'white',
+            backgroundImage: 'none',  // Remove any default background image
           },
         }}
       >
