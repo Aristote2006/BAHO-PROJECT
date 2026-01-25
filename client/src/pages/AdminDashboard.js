@@ -17,7 +17,9 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { 
@@ -47,6 +49,13 @@ const AdminDashboard = () => {
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
   const [recentActivity, setRecentActivity] = useState([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -86,6 +95,21 @@ const AdminDashboard = () => {
       setActiveTab(activeTab - 1);
     }
   };
+  const showSnackbar = (message, severity = 'success') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({
+      ...prev,
+      open: false
+    }));
+  };
+
   const openProfileMenu = Boolean(anchorEl);
 
   // Calculate statistics
@@ -206,58 +230,88 @@ const AdminDashboard = () => {
 
   const handleAddEvent = async (eventData) => {
     try {
-      const newEvent = await eventService.create(eventData);
-      setEvents(prev => [newEvent, ...prev]);
+      let newEvent;
+      if (editingEvent) {
+        // Update existing event
+        newEvent = await eventService.update(editingEvent._id, eventData);
+        setEvents(prev => prev.map(e => e._id === editingEvent._id ? newEvent : e));
+        showSnackbar('Event updated successfully!', 'success');
+        console.log('Event updated:', newEvent);
+      } else {
+        // Create new event
+        newEvent = await eventService.create(eventData);
+        setEvents(prev => [newEvent, ...prev]);
+        
+        // Add to recent activity with detailed report information
+        setRecentActivity(prev => [{
+          type: 'event',
+          action: 'added',
+          title: newEvent.title,
+          description: newEvent.description,
+          timestamp: newEvent.createdAt || new Date().toISOString(),
+          id: newEvent._id,
+          details: {
+            location: newEvent.location,
+            date: newEvent.scope?.startDate || newEvent.startDate,
+            time: newEvent.time,
+            category: newEvent.category,
+            image: newEvent.image
+          }
+        }, ...prev].slice(0, 5));
+        showSnackbar('Event created successfully!', 'success');
+        console.log('New event added:', newEvent);
+      }
       
-      // Add to recent activity with detailed report information
-      setRecentActivity(prev => [{
-        type: 'event',
-        action: 'added',
-        title: newEvent.title,
-        description: newEvent.description,
-        timestamp: newEvent.createdAt || new Date().toISOString(),
-        id: newEvent._id,
-        details: {
-          location: newEvent.location,
-          date: newEvent.scope?.startDate || newEvent.startDate,
-          time: newEvent.time,
-          category: newEvent.category,
-          image: newEvent.image
-        }
-      }, ...prev].slice(0, 5));
-      
-      console.log('New event added:', newEvent);
+      // Reset editing state
+      setEditingEvent(null);
+      setShowEventModal(false);
     } catch (error) {
-      console.error('Error adding event:', error);
+      console.error('Error saving event:', error);
+      showSnackbar(`Failed to save event: ${error.message}`, 'error');
     }
   };
 
   const handleAddProject = async (projectData) => {
     try {
-      const newProject = await projectService.create(projectData);
-      setProjects(prev => [newProject, ...prev]);
+      let newProject;
+      if (editingProject) {
+        // Update existing project
+        newProject = await projectService.update(editingProject._id, projectData);
+        setProjects(prev => prev.map(p => p._id === editingProject._id ? newProject : p));
+        showSnackbar('Project updated successfully!', 'success');
+        console.log('Project updated:', newProject);
+      } else {
+        // Create new project
+        newProject = await projectService.create(projectData);
+        setProjects(prev => [newProject, ...prev]);
+        
+        // Add to recent activity with detailed report information
+        setRecentActivity(prev => [{
+          type: 'project',
+          action: 'added',
+          title: newProject.title,
+          description: newProject.description,
+          timestamp: newProject.createdAt || new Date().toISOString(),
+          id: newProject._id,
+          details: {
+            leader: newProject.leader,
+            startDate: newProject.scope?.startDate || newProject.startDate,
+            endDate: newProject.scope?.endDate || newProject.endDate,
+            status: newProject.status,
+            category: newProject.category,
+            image: newProject.image
+          }
+        }, ...prev].slice(0, 5));
+        showSnackbar('Project created successfully!', 'success');
+        console.log('New project added:', newProject);
+      }
       
-      // Add to recent activity with detailed report information
-      setRecentActivity(prev => [{
-        type: 'project',
-        action: 'added',
-        title: newProject.title,
-        description: newProject.description,
-        timestamp: newProject.createdAt || new Date().toISOString(),
-        id: newProject._id,
-        details: {
-          leader: newProject.leader,
-          startDate: newProject.scope?.startDate || newProject.startDate,
-          endDate: newProject.scope?.endDate || newProject.endDate,
-          status: newProject.status,
-          category: newProject.category,
-          image: newProject.image
-        }
-      }, ...prev].slice(0, 5));
-      
-      console.log('New project added:', newProject);
+      // Reset editing state
+      setEditingProject(null);
+      setShowProjectModal(false);
     } catch (error) {
-      console.error('Error adding project:', error);
+      console.error('Error saving project:', error);
+      showSnackbar(`Failed to save project: ${error.message}`, 'error');
     }
   };
 
@@ -267,10 +321,18 @@ const AdminDashboard = () => {
         await eventService.delete(id);
         setEvents(prev => prev.filter(e => e._id !== id));
         setRecentActivity(prev => prev.filter(item => !(item.type === 'event' && item.id === id)));
+        showSnackbar('Event deleted successfully!', 'success');
+        console.log('Event deleted successfully');
       } catch (error) {
         console.error('Error deleting event:', error);
+        showSnackbar(`Failed to delete event: ${error.message}`, 'error');
       }
     }
+  };
+
+  const handleEditEvent = (event) => {
+    setEditingEvent(event);
+    setShowEventModal(true);
   };
 
   // Export recent activity report
@@ -306,10 +368,18 @@ const AdminDashboard = () => {
         await projectService.delete(id);
         setProjects(prev => prev.filter(p => p._id !== id));
         setRecentActivity(prev => prev.filter(item => !(item.type === 'project' && item.id === id)));
+        showSnackbar('Project deleted successfully!', 'success');
+        console.log('Project deleted successfully');
       } catch (error) {
         console.error('Error deleting project:', error);
+        showSnackbar(`Failed to delete project: ${error.message}`, 'error');
       }
     }
+  };
+
+  const handleEditProject = (project) => {
+    setEditingProject(project);
+    setShowProjectModal(true);
   };
 
 
@@ -663,7 +733,12 @@ const AdminDashboard = () => {
                             </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
-                            <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
+                            <Button 
+                              size="small" 
+                              startIcon={<EditIcon />} 
+                              sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}
+                              onClick={() => handleEditEvent(event)}
+                            >
                               Edit
                             </Button>
                             <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteEvent(event._id || event.id)}>
@@ -768,7 +843,12 @@ const AdminDashboard = () => {
                             </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
-                            <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
+                            <Button 
+                              size="small" 
+                              startIcon={<EditIcon />} 
+                              sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}
+                              onClick={() => handleEditProject(project)}
+                            >
                               Edit
                             </Button>
                             <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteProject(project._id || project.id)}>
@@ -888,15 +968,39 @@ const AdminDashboard = () => {
       {/* Modals */}
       <AddEventModal 
         open={showEventModal}
-        onClose={() => setShowEventModal(false)}
+        onClose={() => {
+          setShowEventModal(false);
+          setEditingEvent(null);
+        }}
         onSubmit={handleAddEvent}
+        editingEvent={editingEvent}
       />
       
       <AddProjectModal 
         open={showProjectModal}
-        onClose={() => setShowProjectModal(false)}
+        onClose={() => {
+          setShowProjectModal(false);
+          setEditingProject(null);
+        }}
         onSubmit={handleAddProject}
+        editingProject={editingProject}
       />
+      
+      {/* Success/Error Snackbar */}
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

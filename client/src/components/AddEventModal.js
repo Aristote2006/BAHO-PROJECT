@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 
-const AddEventModal = ({ open, onClose, onSubmit }) => {
+const AddEventModal = ({ open, onClose, onSubmit, editingEvent }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -28,6 +28,32 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
     image: null
   });
 
+  // Initialize form with editing event data
+  useEffect(() => {
+    if (editingEvent) {
+      setFormData({
+        title: editingEvent.title || '',
+        description: editingEvent.description || '',
+        date: editingEvent.scope?.startDate ? new Date(editingEvent.scope.startDate).toISOString().split('T')[0] : '',
+        time: editingEvent.time || '',
+        location: editingEvent.location || '',
+        category: editingEvent.category || 'Event',
+        image: editingEvent.image || null
+      });
+    } else {
+      // Reset form for new event
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        time: '',
+        location: '',
+        category: 'Event',
+        image: null
+      });
+    }
+  }, [editingEvent, open]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -37,10 +63,18 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
   };
 
   const handleImageChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      image: e.target.files[0]
-    }));
+    const file = e.target.files[0];
+    if (file) {
+      // Convert to base64 for preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData(prev => ({
+          ...prev,
+          image: e.target.result // Store base64 string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -53,16 +87,7 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
       },
       time: formData.time // Adding the time field
     });
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      date: '',
-      time: '',
-      location: '',
-      category: 'Event',
-      image: null
-    });
+    // Don't reset form here - it will be reset when modal closes
     onClose();
   };
 
@@ -83,7 +108,7 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
       <DialogTitle>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h5" sx={{ color: '#D4AF37', fontWeight: 600 }}>
-            Add New Event
+            {editingEvent ? 'Edit Event' : 'Add New Event'}
           </Typography>
           <IconButton onClick={onClose} sx={{ color: '#D4AF37' }}>
             <CloseIcon />
@@ -296,36 +321,45 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
             </Grid>
             
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Image URL"
-                name="image"
-                value={formData.image || ''}
-                onChange={handleChange}
-                placeholder="Enter image URL"
-                InputProps={{
-                  sx: {
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#D4AF37'
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#F9E79F'
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#F9E79F'
-                    }
-                  }
-                }}
-                InputLabelProps={{
-                  sx: {
-                    color: '#D4AF37'
-                  }
-                }}
-                sx={{ 
-                  '& .MuiInputBase-input': { color: 'white' },
-                  '& .MuiFormLabel-root': { color: '#D4AF37' }
-                }}
+              <input
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="event-image-upload"
+                type="file"
+                onChange={handleImageChange}
               />
+              <label htmlFor="event-image-upload">
+                <Button 
+                  variant="outlined" 
+                  component="span"
+                  fullWidth
+                  sx={{
+                    height: '100%',
+                    borderColor: '#D4AF37',
+                    color: '#D4AF37',
+                    '&:hover': {
+                      borderColor: '#F9E79F',
+                      backgroundColor: 'rgba(212, 175, 55, 0.1)'
+                    }
+                  }}
+                >
+                  {formData.image ? 'Change Image' : 'Upload Image'}
+                </Button>
+              </label>
+              {formData.image && (
+                <Box sx={{ mt: 1, textAlign: 'center' }}>
+                  <img 
+                    src={formData.image} 
+                    alt="Preview" 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '150px', 
+                      borderRadius: '4px',
+                      border: '1px solid #D4AF37'
+                    }} 
+                  />
+                </Box>
+              )}
             </Grid>
           </Grid>
         </Box>
@@ -357,7 +391,7 @@ const AddEventModal = ({ open, onClose, onSubmit }) => {
           }}
           variant="contained"
         >
-          Add Event
+          {editingEvent ? 'Update Event' : 'Add Event'}
         </Button>
       </DialogActions>
     </Dialog>

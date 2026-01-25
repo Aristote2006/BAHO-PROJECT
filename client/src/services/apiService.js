@@ -143,7 +143,32 @@ export const eventService = {
     }
     return await safeJsonParse(response);
   },
-  // ... other methods
+  update: async (id, eventData) => {
+    const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(eventData)
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update event');
+    }
+    return await safeJsonParse(response);
+  },
+  delete: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete event');
+    }
+    return await safeJsonParse(response);
+  }
 };
 
 export const projectService = {
@@ -172,5 +197,30 @@ export const projectService = {
     }
     return await safeJsonParse(response);
   },
-  // ... other methods
+  update: async (id, projectData) => {
+    const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(projectData)
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update project');
+    }
+    return await safeJsonParse(response);
+  },
+  delete: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete project');
+    }
+    return await safeJsonParse(response);
+  }
 };
