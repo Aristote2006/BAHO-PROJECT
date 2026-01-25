@@ -35,25 +35,35 @@ router.post('/', async (req, res) => {
       location,
       category,
       image,
-      featured
+      featured,
+      time,
+      link
     } = req.body;
+
+    // Validate required fields
+    if (!title || !description || !scope || !scope.startDate || !location || !category) {
+      return res.status(400).json({ message: 'Missing required fields: title, description, scope.startDate, location, or category' });
+    }
 
     const event = new Event({
       title,
       description,
       scope: {
         startDate: new Date(scope.startDate),
-        endDate: new Date(scope.endDate)
+        endDate: scope.endDate ? new Date(scope.endDate) : new Date(scope.startDate) // Use same date if no end date provided
       },
       location,
       category,
+      time: time || '',
       image: image || '',
+      link: link || '',
       featured: featured || false
     });
 
     const savedEvent = await event.save();
     res.status(201).json(savedEvent);
   } catch (error) {
+    console.error('Error creating event:', error);
     res.status(400).json({ message: 'Error creating event', error: error.message });
   }
 });

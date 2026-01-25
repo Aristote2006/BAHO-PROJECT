@@ -37,6 +37,11 @@ router.post('/', async (req, res) => {
       status
     } = req.body;
 
+    // Validate required fields
+    if (!title || !description || !scope || !scope.startDate || !scope.endDate || !leader) {
+      return res.status(400).json({ message: 'Missing required fields: title, description, scope.startDate, scope.endDate, or leader' });
+    }
+
     const project = new Project({
       title,
       description,
@@ -52,6 +57,7 @@ router.post('/', async (req, res) => {
     const savedProject = await project.save();
     res.status(201).json(savedProject);
   } catch (error) {
+    console.error('Error creating project:', error);
     res.status(400).json({ message: 'Error creating project', error: error.message });
   }
 });

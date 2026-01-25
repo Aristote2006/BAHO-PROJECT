@@ -19,6 +19,7 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { 
   Event as EventIcon, 
   Folder as ProjectIcon, 
@@ -37,6 +38,7 @@ import AddProjectModal from '../components/AddProjectModal';
 import { eventService, projectService } from '../services/apiService';
 
 const AdminDashboard = () => {
+  const theme = useTheme();
   const [activeTab, setActiveTab] = useState(0);
   const [events, setEvents] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -51,6 +53,39 @@ const AdminDashboard = () => {
   
   // Add state for profile menu
   const [anchorEl, setAnchorEl] = useState(null);
+
+  // Swipe handling for mobile
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && activeTab < 2) {
+      // Swipe left to go to next tab
+      setActiveTab(activeTab + 1);
+    }
+    
+    if (isRightSwipe && activeTab > 0) {
+      // Swipe right to go to previous tab
+      setActiveTab(activeTab - 1);
+    }
+  };
   const openProfileMenu = Boolean(anchorEl);
 
   // Calculate statistics
@@ -543,306 +578,311 @@ const AdminDashboard = () => {
           borderRadius: 2,
           border: '1px solid rgba(212, 175, 55, 0.2)'
         }}>
-          <AppBar 
-            position="static" 
-            sx={{ 
-              background: 'rgba(1, 35, 75, 0.8)',
-              borderRadius: '8px 8px 0 0'
+        <AppBar 
+          position="static" 
+          sx={{ 
+            background: 'rgba(1, 35, 75, 0.8)',
+            borderRadius: '8px 8px 0 0'
+          }}
+        >
+          <Tabs 
+            value={activeTab} 
+            onChange={handleTabChange}
+            textColor="inherit"
+            indicatorColor="secondary"
+            sx={{
+              '& .MuiTab-root': {
+                color: '#D4AF37',
+                fontWeight: 600
+              },
+              '& .Mui-selected': {
+                color: '#FFF'
+              }
             }}
           >
-            <Tabs 
-              value={activeTab} 
-              onChange={handleTabChange}
-              textColor="inherit"
-              indicatorColor="secondary"
-              sx={{
-                '& .MuiTab-root': {
-                  color: '#D4AF37',
-                  fontWeight: 600
-                },
-                '& .Mui-selected': {
-                  color: '#FFF'
-                }
-              }}
-            >
-              <Tab label="Events Management" icon={<EventIcon />} />
-              <Tab label="Projects Management" icon={<ProjectIcon />} />
-              <Tab label="Recent Activity" icon={<DashboardIcon />} />
-            </Tabs>
-          </AppBar>
-
-          <Box sx={{ p: 3 }}>
-            {activeTab === 0 && (
-              <Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
-                    Events Management
-                  </Typography>
-                  <Button 
-                    variant="contained" 
-                    startIcon={<AddIcon />}
-                    onClick={() => setShowEventModal(true)}
-                    sx={{ 
-                      background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
-                      color: '#01234B',
-                      fontWeight: 600,
-                      '&:hover': {
-                        background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
-                      }
-                    }}
-                  >
-                    Add New Event
-                  </Button>
-                </Box>
+            <Tab label="Events Management" icon={<EventIcon />} />
+            <Tab label="Projects Management" icon={<ProjectIcon />} />
+            <Tab label="Recent Activity" icon={<DashboardIcon />} />
+          </Tabs>
+        </AppBar>
                 
-                <Grid container spacing={3}>
-                  {events.map(event => (
-                    <Grid item xs={12} sm={6} md={4} key={event._id || event.id}>
-                      <Card sx={{ 
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(212, 175, 55, 0.3)',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: { xs: 'none', sm: 'scale(1.02)' }, // No hover effect on mobile
-                          boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)'
-                        }
-                      }}>
-                        <CardContent>
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: 1, mb: 1 }}>
-                            <Box sx={{ flex: 1 }}>
-                              <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-                                {event.title}
-                              </Typography>
-                              {event.image && (
-                                <Box sx={{ mt: 1 }}>
-                                  <img src={event.image} alt={event.title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px', maxHeight: '100px', objectFit: 'cover' }} />
-                                </Box>
-                              )}
-                              <Typography variant="body2" sx={{ mt: 1, color: '#ccc', wordBreak: 'break-word', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                                {event.description?.substring(0, 100)}...
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
-                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
-                                Edit
-                              </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteEvent(event._id || event.id)}>
-                                Delete
-                              </Button>
-                            </Box>
+        <Box 
+          sx={{ p: 3 }}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {activeTab === 0 && (
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
+                  Events Management
+                </Typography>
+                <Button 
+                  variant="contained" 
+                  startIcon={<AddIcon />}
+                  onClick={() => setShowEventModal(true)}
+                  sx={{ 
+                    background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
+                    color: '#01234B',
+                    fontWeight: 600,
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
+                    }
+                  }}
+                >
+                  Add New Event
+                </Button>
+              </Box>
+              
+              <Grid container spacing={3}>
+                {events.map(event => (
+                  <Grid item xs={12} sm={6} md={4} key={event._id || event.id}>
+                    <Card sx={{ 
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(212, 175, 55, 0.3)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: { xs: 'none', sm: 'scale(1.02)' }, // No hover effect on mobile
+                        boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)'
+                      }
+                    }}>
+                      <CardContent>
+                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: 1, mb: 1 }}>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                              {event.title}
+                            </Typography>
+                            {event.image && (
+                              <Box sx={{ mt: 1 }}>
+                                <img src={event.image} alt={event.title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px', maxHeight: '100px', objectFit: 'cover' }} />
+                              </Box>
+                            )}
+                            <Typography variant="body2" sx={{ mt: 1, color: '#ccc', wordBreak: 'break-word', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+                              {event.description?.substring(0, 100)}...
+                            </Typography>
                           </Box>
-                          
-                          <Grid container spacing={0.5} sx={{ mt: 1 }}>
-                            <Grid item xs={12} sm={6}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
-                                📅 {new Date(event.scope?.startDate || event.startDate).toLocaleDateString()}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
-                                ⏰ {event.time}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
-                                📍 {event.location}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                          
-                          {event.link && (
-                            <Button 
-                              href={event.link}
-                              target="_blank"
-                              size="small"
-                              sx={{ 
-                                mt: 1,
-                                color: '#D4AF37',
-                                borderColor: '#D4AF37',
-                                fontSize: '0.75rem',
-                                '&:hover': {
-                                  backgroundColor: 'rgba(212, 175, 55, 0.1)'
-                                }
-                              }}
-                              variant="outlined"
-                            >
-                              View Details
+                          <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
+                            <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
+                              Edit
                             </Button>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
-
-            {activeTab === 1 && (
-              <Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
-                    Projects Management
-                  </Typography>
-                  <Button 
-                    variant="contained" 
-                    startIcon={<AddIcon />}
-                    onClick={() => setShowProjectModal(true)}
-                    sx={{ 
-                      background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
-                      color: '#01234B',
-                      fontWeight: 600,
-                      '&:hover': {
-                        background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
-                      }
-                    }}
-                  >
-                    Add New Project
-                  </Button>
-                </Box>
-                
-                <Grid container spacing={3}>
-                  {projects.map(project => (
-                    <Grid item xs={12} sm={6} md={4} key={project._id || project.id}>
-                      <Card sx={{ 
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(212, 175, 55, 0.3)',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: { xs: 'none', sm: 'scale(1.02)' }, // No hover effect on mobile
-                          boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)'
-                        }
-                      }}>
-                        <CardContent>
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: 1, mb: 1 }}>
-                            <Box sx={{ flex: 1 }}>
-                              <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-                                {project.title}
-                              </Typography>
-                              {project.image && (
-                                <Box sx={{ mt: 1 }}>
-                                  <img src={project.image} alt={project.title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px', maxHeight: '100px', objectFit: 'cover' }} />
-                                </Box>
-                              )}
-                              <Typography variant="body2" sx={{ mt: 1, color: '#ccc', wordBreak: 'break-word', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                                {project.description?.substring(0, 100)}...
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
-                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
-                                Edit
-                              </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteProject(project._id || project.id)}>
-                                Delete
-                              </Button>
-                            </Box>
+                            <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteEvent(event._id || event.id)}>
+                              Delete
+                            </Button>
                           </Box>
-                          
-                          <Grid container spacing={0.5} sx={{ mt: 1 }}>
-                            <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
-                                📅 Scope: {new Date(project.scope?.startDate || project.startDate).toLocaleDateString()} - {new Date(project.scope?.endDate || project.endDate).toLocaleDateString()}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
-                                👤 Leader: {project.leader}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <Chip 
-                                label={project.status}
-                                size="small"
-                                sx={{ 
-                                  backgroundColor: project.status === 'Active' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 152, 0, 0.2)',
-                                  color: project.status === 'Active' ? '#4caf50' : '#ff9800',
-                                  fontSize: '0.7rem'
-                                }}
-                              />
-                            </Grid>
-                          </Grid>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
-
-            {activeTab === 2 && (
-              <Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
-                    Recent Activity
-                  </Typography>
-                  <Button 
-                    variant="contained" 
-                    startIcon={<DashboardIcon />}
-                    onClick={exportReport}
-                    sx={{ 
-                      background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
-                      color: '#01234B',
-                      fontWeight: 600,
-                      '&:hover': {
-                        background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
-                      }
-                    }}
-                  >
-                    Export Report
-                  </Button>
-                </Box>
-                
-                {recentActivity.length > 0 ? (
-                  <Card sx={{ 
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(212, 175, 55, 0.2)'
-                  }}>
-                    <CardContent>
-                      {recentActivity.map((activity, index) => {
-                        const timeAgo = getTimeAgo(activity.timestamp);
-                        const icon = activity.type === 'event' ? '📅' : '📁';
+                        </Box>
                         
-                        return (
-                          <Box 
-                            key={index} 
+                        <Grid container spacing={0.5} sx={{ mt: 1 }}>
+                          <Grid item xs={12} sm={6}>
+                            <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                              📅 {new Date(event.scope?.startDate || event.startDate).toLocaleDateString()}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                              ⏰ {event.time}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                              📍 {event.location}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        
+                        {event.link && (
+                          <Button 
+                            href={event.link}
+                            target="_blank"
+                            size="small"
                             sx={{ 
-                              color: '#ccc', 
-                              mt: index > 0 ? 1 : 0,
-                              pb: index < recentActivity.length - 1 ? 1 : 0,
-                              borderBottom: index < recentActivity.length - 1 ? '1px solid rgba(212, 175, 55, 0.1)' : 'none',
-                              fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                              mt: 1,
+                              color: '#D4AF37',
+                              borderColor: '#D4AF37',
+                              fontSize: '0.75rem',
                               '&:hover': {
-                                backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                                borderRadius: '4px'
+                                backgroundColor: 'rgba(212, 175, 55, 0.1)'
                               }
                             }}
+                            variant="outlined"
                           >
-                            <Typography variant="body2">
-                              {icon} New {activity.type} "{activity.title}" {activity.action} - {timeAgo}
+                            View Details
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          )}
+
+          {activeTab === 1 && (
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
+                  Projects Management
+                </Typography>
+                <Button 
+                  variant="contained" 
+                  startIcon={<AddIcon />}
+                  onClick={() => setShowProjectModal(true)}
+                  sx={{ 
+                    background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
+                    color: '#01234B',
+                    fontWeight: 600,
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
+                    }
+                  }}
+                >
+                  Add New Project
+                </Button>
+              </Box>
+              
+              <Grid container spacing={3}>
+                {projects.map(project => (
+                  <Grid item xs={12} sm={6} md={4} key={project._id || project.id}>
+                    <Card sx={{ 
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(212, 175, 55, 0.3)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: { xs: 'none', sm: 'scale(1.02)' }, // No hover effect on mobile
+                        boxShadow: '0 10px 30px rgba(212, 175, 55, 0.2)'
+                      }
+                    }}>
+                      <CardContent>
+                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: 1, mb: 1 }}>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                              {project.title}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#aaa', display: 'block', mt: 0.5 }}>
-                              {activity.description?.substring(0, 60)}...
+                            {project.image && (
+                              <Box sx={{ mt: 1 }}>
+                                <img src={project.image} alt={project.title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px', maxHeight: '100px', objectFit: 'cover' }} />
+                              </Box>
+                            )}
+                            <Typography variant="body2" sx={{ mt: 1, color: '#ccc', wordBreak: 'break-word', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+                              {project.description?.substring(0, 100)}...
                             </Typography>
                           </Box>
-                        );
-                      })}
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card sx={{ 
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(212, 175, 55, 0.2)'
-                  }}>
-                    <CardContent>
-                      <Typography variant="body2" sx={{ color: '#ccc', textAlign: 'center', py: 2, fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                        No recent activity. Start by creating your first event or project!
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                )}
+                          <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
+                            <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
+                              Edit
+                            </Button>
+                            <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteProject(project._id || project.id)}>
+                              Delete
+                            </Button>
+                          </Box>
+                        </Box>
+                        
+                        <Grid container spacing={0.5} sx={{ mt: 1 }}>
+                          <Grid item xs={12}>
+                            <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                              📅 Scope: {new Date(project.scope?.startDate || project.startDate).toLocaleDateString()} - {new Date(project.scope?.endDate || project.endDate).toLocaleDateString()}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                              👤 Leader: {project.leader}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Chip 
+                              label={project.status}
+                              size="small"
+                              sx={{ 
+                                backgroundColor: project.status === 'Active' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 152, 0, 0.2)',
+                                color: project.status === 'Active' ? '#4caf50' : '#ff9800',
+                                fontSize: '0.7rem'
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          )}
+
+          {activeTab === 2 && (
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
+                  Recent Activity
+                </Typography>
+                <Button 
+                  variant="contained" 
+                  startIcon={<DashboardIcon />}
+                  onClick={exportReport}
+                  sx={{ 
+                    background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
+                    color: '#01234B',
+                    fontWeight: 600,
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
+                    }
+                  }}
+                >
+                  Export Report
+                </Button>
               </Box>
-            )}
-          </Box>
-        </Card>
+              
+              {recentActivity.length > 0 ? (
+                <Card sx={{ 
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(212, 175, 55, 0.2)'
+                }}>
+                  <CardContent>
+                    {recentActivity.map((activity, index) => {
+                      const timeAgo = getTimeAgo(activity.timestamp);
+                      const icon = activity.type === 'event' ? '📅' : '📁';
+                      
+                      return (
+                        <Box 
+                          key={index} 
+                          sx={{ 
+                            color: '#ccc', 
+                            mt: index > 0 ? 1 : 0,
+                            pb: index < recentActivity.length - 1 ? 1 : 0,
+                            borderBottom: index < recentActivity.length - 1 ? '1px solid rgba(212, 175, 55, 0.1)' : 'none',
+                            fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                            '&:hover': {
+                              backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                              borderRadius: '4px'
+                            }
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {icon} New {activity.type} "{activity.title}" {activity.action} - {timeAgo}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#aaa', display: 'block', mt: 0.5 }}>
+                            {activity.description?.substring(0, 60)}...
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card sx={{ 
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(212, 175, 55, 0.2)'
+                }}>
+                  <CardContent>
+                    <Typography variant="body2" sx={{ color: '#ccc', textAlign: 'center', py: 2, fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+                      No recent activity. Start by creating your first event or project!
+                    </Typography>
+                  </CardContent>
+                </Card>
+              )}
+            </Box>
+          )}
+        </Box>
+      </Card>
       </Container>
       
       {/* Modals */}

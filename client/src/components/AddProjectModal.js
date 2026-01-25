@@ -250,33 +250,36 @@ const AddProjectModal = ({ open, onClose, onSubmit }) => {
             </Grid>
             
             <Grid item xs={12}>
-              <Button
+              <TextField
                 fullWidth
-                variant="outlined"
-                component="label"
-                sx={{
-                  borderColor: '#D4AF37',
-                  color: '#D4AF37',
-                  height: '56px',
-                  '&:hover': {
-                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                    borderColor: '#F9E79F'
+                label="Image URL"
+                name="image"
+                value={formData.image || ''}
+                onChange={handleChange}
+                placeholder="Enter image URL"
+                InputProps={{
+                  sx: {
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#D4AF37'
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#F9E79F'
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#F9E79F'
+                    }
                   }
                 }}
-              >
-                Upload Project Image
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-              </Button>
-              {formData.image && (
-                <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#D4AF37' }}>
-                  Selected: {formData.image.name}
-                </Typography>
-              )}
+                InputLabelProps={{
+                  sx: {
+                    color: '#D4AF37'
+                  }
+                }}
+                sx={{ 
+                  '& .MuiInputBase-input': { color: 'white' },
+                  '& .MuiFormLabel-root': { color: '#D4AF37' }
+                }}
+              />
             </Grid>
           </Grid>
         </Box>
