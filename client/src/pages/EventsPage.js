@@ -51,7 +51,25 @@ const EventsPage = () => {
     try {
       setLoading(true);
       const eventsData = await eventService.getAll().catch(() => []);
-      setEvents([...eventsData, ...STATIC_EVENTS]);
+      
+      // Define 'new' as items created in the last 7 days
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      
+      const markedEvents = eventsData.map(event => ({
+        ...event,
+        isStatic: false, // Dynamic events are not static
+        isNew: event.createdAt ? new Date(event.createdAt) > sevenDaysAgo : false
+      }));
+      
+      // Sort events: new items first, then by date
+      const sortedEvents = [...markedEvents].sort((a, b) => {
+        if (a.isNew && !b.isNew) return -1;
+        if (!a.isNew && b.isNew) return 1;
+        return new Date(b.createdAt || b.scope?.startDate || 0) - new Date(a.createdAt || a.scope?.startDate || 0);
+      });
+
+      setEvents([...sortedEvents, ...STATIC_EVENTS]);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching events:', err);
@@ -165,12 +183,12 @@ const EventsPage = () => {
               events.filter(event => event.featured).map((event, index) => (
                 <Grid item xs={12} sm={6} md={6} lg={4} key={event._id}> {/* Responsive grid - 1 column on xs, 2 on sm, 2 on md, 3 on lg */}
                   <StyledCard sx={{ position: 'relative' }}>
-                    { !event.isStatic && (
+                    { (!event.isStatic && event.isNew) && (
                       <Chip 
                         label="NEW" 
                         color="error" 
                         size="small" 
-                        sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold' }} 
+                        sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold', fontSize: '0.7rem' }} 
                       />
                     )}
                     <ImageContainer>

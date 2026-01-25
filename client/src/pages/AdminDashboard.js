@@ -174,13 +174,21 @@ const AdminDashboard = () => {
       const newEvent = await eventService.create(eventData);
       setEvents(prev => [newEvent, ...prev]);
       
-      // Add to recent activity
+      // Add to recent activity with detailed report information
       setRecentActivity(prev => [{
         type: 'event',
         action: 'added',
         title: newEvent.title,
-        timestamp: new Date().toISOString(),
-        id: newEvent._id
+        description: newEvent.description,
+        timestamp: newEvent.createdAt || new Date().toISOString(),
+        id: newEvent._id,
+        details: {
+          location: newEvent.location,
+          date: newEvent.scope?.startDate || newEvent.startDate,
+          time: newEvent.time,
+          category: newEvent.category,
+          image: newEvent.image
+        }
       }, ...prev].slice(0, 5));
       
       console.log('New event added:', newEvent);
@@ -194,13 +202,22 @@ const AdminDashboard = () => {
       const newProject = await projectService.create(projectData);
       setProjects(prev => [newProject, ...prev]);
       
-      // Add to recent activity
+      // Add to recent activity with detailed report information
       setRecentActivity(prev => [{
         type: 'project',
         action: 'added',
         title: newProject.title,
-        timestamp: new Date().toISOString(),
-        id: newProject._id
+        description: newProject.description,
+        timestamp: newProject.createdAt || new Date().toISOString(),
+        id: newProject._id,
+        details: {
+          leader: newProject.leader,
+          startDate: newProject.scope?.startDate || newProject.startDate,
+          endDate: newProject.scope?.endDate || newProject.endDate,
+          status: newProject.status,
+          category: newProject.category,
+          image: newProject.image
+        }
       }, ...prev].slice(0, 5));
       
       console.log('New project added:', newProject);
@@ -221,6 +238,33 @@ const AdminDashboard = () => {
     }
   };
 
+  // Export recent activity report
+  const exportReport = () => {
+    // Create a CSV-like string for the report
+    const headers = ['Type', 'Title', 'Action', 'Timestamp', 'Description'];
+    const csvContent = [
+      headers.join(','),
+      ...recentActivity.map(activity => [
+        activity.type,
+        `"${activity.title}"`,
+        activity.action,
+        activity.timestamp,
+        `"${activity.description || ''}"`
+      ].join(','))
+    ].join('\n');
+    
+    // Create a downloadable file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `recent_activity_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleDeleteProject = async (id) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
@@ -232,6 +276,7 @@ const AdminDashboard = () => {
       }
     }
   };
+
 
   if (loading) {
     return (
@@ -552,7 +597,7 @@ const AdminDashboard = () => {
                 
                 <Grid container spacing={3}>
                   {events.map(event => (
-                    <Grid item xs={12} sm={6} key={event.id}>
+                    <Grid item xs={12} sm={6} md={4} key={event._id || event.id}>
                       <Card sx={{ 
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(212, 175, 55, 0.3)',
@@ -563,37 +608,43 @@ const AdminDashboard = () => {
                         }
                       }}>
                         <CardContent>
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word' }}>
-                              {event.title}
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
-                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 1 }}>
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: 1, mb: 1 }}>
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                                {event.title}
+                              </Typography>
+                              {event.image && (
+                                <Box sx={{ mt: 1 }}>
+                                  <img src={event.image} alt={event.title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px', maxHeight: '100px', objectFit: 'cover' }} />
+                                </Box>
+                              )}
+                              <Typography variant="body2" sx={{ mt: 1, color: '#ccc', wordBreak: 'break-word', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+                                {event.description?.substring(0, 100)}...
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
+                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
                                 Edit
                               </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 1 }} onClick={() => handleDeleteEvent(event._id)}>
+                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteEvent(event._id || event.id)}>
                                 Delete
                               </Button>
                             </Box>
                           </Box>
                           
-                          <Typography variant="body2" sx={{ mb: 2, color: '#ccc', wordBreak: 'break-word' }}>
-                            {event.description}
-                          </Typography>
-                          
-                          <Grid container spacing={1}>
-                            <Grid item xs={6}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
-                                📅 {new Date(event.scope.startDate).toLocaleDateString()}
+                          <Grid container spacing={0.5} sx={{ mt: 1 }}>
+                            <Grid item xs={12} sm={6}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                                📅 {new Date(event.scope?.startDate || event.startDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
-                            <Grid item xs={6}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
+                            <Grid item xs={12} sm={6}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                                 ⏰ {event.time}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                                 📍 {event.location}
                               </Typography>
                             </Grid>
@@ -605,16 +656,17 @@ const AdminDashboard = () => {
                               target="_blank"
                               size="small"
                               sx={{ 
-                                mt: 2,
+                                mt: 1,
                                 color: '#D4AF37',
                                 borderColor: '#D4AF37',
+                                fontSize: '0.75rem',
                                 '&:hover': {
                                   backgroundColor: 'rgba(212, 175, 55, 0.1)'
                                 }
                               }}
                               variant="outlined"
                             >
-                              View Event Details
+                              View Details
                             </Button>
                           )}
                         </CardContent>
@@ -650,7 +702,7 @@ const AdminDashboard = () => {
                 
                 <Grid container spacing={3}>
                   {projects.map(project => (
-                    <Grid item xs={12} sm={6} key={project.id}>
+                    <Grid item xs={12} sm={6} md={4} key={project._id || project.id}>
                       <Card sx={{ 
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid rgba(212, 175, 55, 0.3)',
@@ -661,32 +713,38 @@ const AdminDashboard = () => {
                         }
                       }}>
                         <CardContent>
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-                            <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word' }}>
-                              {project.title}
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
-                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 1 }}>
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: 1, mb: 1 }}>
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="h6" sx={{ color: '#D4AF37', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                                {project.title}
+                              </Typography>
+                              {project.image && (
+                                <Box sx={{ mt: 1 }}>
+                                  <img src={project.image} alt={project.title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '4px', maxHeight: '100px', objectFit: 'cover' }} />
+                                </Box>
+                              )}
+                              <Typography variant="body2" sx={{ mt: 1, color: '#ccc', wordBreak: 'break-word', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+                                {project.description?.substring(0, 100)}...
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, flexDirection: { xs: 'row', sm: 'column' } }}>
+                              <Button size="small" startIcon={<EditIcon />} sx={{ color: '#D4AF37', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}>
                                 Edit
                               </Button>
-                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 1 }} onClick={() => handleDeleteProject(project._id)}>
+                              <Button size="small" startIcon={<DeleteIcon />} sx={{ color: '#ff6b6b', minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }} onClick={() => handleDeleteProject(project._id || project.id)}>
                                 Delete
                               </Button>
                             </Box>
                           </Box>
                           
-                          <Typography variant="body2" sx={{ mb: 2, color: '#ccc', wordBreak: 'break-word' }}>
-                            {project.description}
-                          </Typography>
-                          
-                          <Grid container spacing={1}>
+                          <Grid container spacing={0.5} sx={{ mt: 1 }}>
                             <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
-                                📅 Scope: {new Date(project.scope.startDate).toLocaleDateString()} - {new Date(project.scope.endDate).toLocaleDateString()}
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
+                                📅 Scope: {new Date(project.scope?.startDate || project.startDate).toLocaleDateString()} - {new Date(project.scope?.endDate || project.endDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word' }}>
+                              <Typography variant="caption" sx={{ color: '#D4AF37', display: 'block', wordBreak: 'break-word', fontSize: { xs: '0.7rem', sm: '0.8rem' } }}>
                                 👤 Leader: {project.leader}
                               </Typography>
                             </Grid>
@@ -696,7 +754,8 @@ const AdminDashboard = () => {
                                 size="small"
                                 sx={{ 
                                   backgroundColor: project.status === 'Active' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 152, 0, 0.2)',
-                                  color: project.status === 'Active' ? '#4caf50' : '#ff9800'
+                                  color: project.status === 'Active' ? '#4caf50' : '#ff9800',
+                                  fontSize: '0.7rem'
                                 }}
                               />
                             </Grid>
@@ -711,9 +770,26 @@ const AdminDashboard = () => {
 
             {activeTab === 2 && (
               <Box>
-                <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600, mb: 3 }}>
-                  Recent Activity
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Typography variant="h4" sx={{ color: '#D4AF37', fontWeight: 600 }}>
+                    Recent Activity
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    startIcon={<DashboardIcon />}
+                    onClick={exportReport}
+                    sx={{ 
+                      background: 'linear-gradient(45deg, #D4AF37, #F9E79F)',
+                      color: '#01234B',
+                      fontWeight: 600,
+                      '&:hover': {
+                        background: 'linear-gradient(45deg, #F9E79F, #D4AF37)'
+                      }
+                    }}
+                  >
+                    Export Report
+                  </Button>
+                </Box>
                 
                 {recentActivity.length > 0 ? (
                   <Card sx={{ 
@@ -726,18 +802,27 @@ const AdminDashboard = () => {
                         const icon = activity.type === 'event' ? '📅' : '📁';
                         
                         return (
-                          <Typography 
+                          <Box 
                             key={index} 
-                            variant="body1" 
                             sx={{ 
                               color: '#ccc', 
-                              mt: index > 0 ? 2 : 0,
-                              pb: index < recentActivity.length - 1 ? 2 : 0,
-                              borderBottom: index < recentActivity.length - 1 ? '1px solid rgba(212, 175, 55, 0.1)' : 'none'
+                              mt: index > 0 ? 1 : 0,
+                              pb: index < recentActivity.length - 1 ? 1 : 0,
+                              borderBottom: index < recentActivity.length - 1 ? '1px solid rgba(212, 175, 55, 0.1)' : 'none',
+                              fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                              '&:hover': {
+                                backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                                borderRadius: '4px'
+                              }
                             }}
                           >
-                            {icon} New {activity.type} "{activity.title}" {activity.action} - {timeAgo}
-                          </Typography>
+                            <Typography variant="body2">
+                              {icon} New {activity.type} "{activity.title}" {activity.action} - {timeAgo}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#aaa', display: 'block', mt: 0.5 }}>
+                              {activity.description?.substring(0, 60)}...
+                            </Typography>
+                          </Box>
                         );
                       })}
                     </CardContent>
@@ -748,7 +833,7 @@ const AdminDashboard = () => {
                     border: '1px solid rgba(212, 175, 55, 0.2)'
                   }}>
                     <CardContent>
-                      <Typography variant="body1" sx={{ color: '#ccc', textAlign: 'center', py: 4 }}>
+                      <Typography variant="body2" sx={{ color: '#ccc', textAlign: 'center', py: 2, fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
                         No recent activity. Start by creating your first event or project!
                       </Typography>
                     </CardContent>

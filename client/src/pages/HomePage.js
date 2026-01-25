@@ -71,9 +71,46 @@ const HomePage = () => {
           projectService.getAll().catch(() => [])
         ]);
         
+        // Define 'new' as items created in the last 7 days
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        const markedEvents = eventsData.map(event => ({
+          ...event,
+          isStatic: false, // Dynamic events are not static
+          isNew: event.createdAt ? new Date(event.createdAt) > sevenDaysAgo : false
+        }));
+        
+        const markedProjects = projectsData.map(project => ({
+          ...project,
+          isStatic: false, // Dynamic projects are not static
+          isNew: project.createdAt ? new Date(project.createdAt) > sevenDaysAgo : false
+        }));
+        
+        // Sort events: new items first, then by date
+        const sortedEvents = [...markedEvents].sort((a, b) => {
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return new Date(b.createdAt || b.scope?.startDate || 0) - new Date(a.createdAt || a.scope?.startDate || 0);
+        });
+        
+        // Sort projects: new items first, then by date
+        const sortedProjects = [...markedProjects].sort((a, b) => {
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return new Date(b.createdAt || b.scope?.startDate || 0) - new Date(a.createdAt || a.scope?.startDate || 0);
+        });
+        
         // Merge dynamic and static, taking newest first and maintaining count of 3
-        const mergedEvents = [...eventsData, ...STATIC_EVENTS].slice(0, 3);
-        const mergedProjects = [...projectsData, ...STATIC_PROJECTS].slice(0, 3);
+        const mergedEvents = [
+          ...sortedEvents,
+          ...STATIC_EVENTS
+        ].slice(0, 3);
+        
+        const mergedProjects = [
+          ...sortedProjects,
+          ...STATIC_PROJECTS
+        ].slice(0, 3);
         
         setDisplayEvents(mergedEvents);
         setDisplayProjects(mergedProjects);
@@ -594,7 +631,7 @@ const HomePage = () => {
           ) : (
             <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}> {/* Responsive spacing */}
               {displayEvents.map((event, index) => (
-                <Grid item xs={12} sm={6} md={4} key={event._id}> {/* Responsive grid columns */}
+                <Grid item xs={12} sm={6} md={4} key={event._id || event.id}> {/* Responsive grid columns */}
                   <Card sx={{ 
                     height: '100%', 
                     display: 'flex', 
@@ -607,12 +644,12 @@ const HomePage = () => {
                       transform: { xs: 'none', sm: 'translateY(-8px)' } // No hover effect on mobile
                     }
                   }}>
-                    { !event.isStatic && (
+                    { (!event.isStatic && !event._id) && (
                       <Chip 
                         label="NEW" 
                         color="error" 
                         size="small" 
-                        sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold' }} 
+                        sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold', fontSize: '0.7rem' }} 
                       />
                     )}
                     <CardMedia
@@ -652,7 +689,7 @@ const HomePage = () => {
                           variant="body2"
                           sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }} // Smaller font size
                         >
-                          {event.scope?.startDate ? (typeof event.scope.startDate === 'string' && event.scope.startDate.includes('Soon') ? event.scope.startDate : new Date(event.scope.startDate).toLocaleDateString()) : 'Date TBD'}
+                          {event.scope?.startDate ? (typeof event.scope.startDate === 'string' && event.scope.startDate.includes('Soon') ? event.scope.startDate : new Date(event.scope?.startDate || event.startDate).toLocaleDateString()) : 'Date TBD'}
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, color: '#666' }}>
@@ -742,7 +779,7 @@ const HomePage = () => {
           ) : (
             <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}> {/* Responsive spacing */}
               {displayProjects.map((project, index) => (
-                <Grid item xs={12} sm={6} md={4} key={project._id}> {/* Responsive grid columns */}
+                <Grid item xs={12} sm={6} md={4} key={project._id || project.id}> {/* Responsive grid columns */}
                   <Card sx={{ 
                     height: '100%', 
                     display: 'flex', 
@@ -755,12 +792,12 @@ const HomePage = () => {
                       transform: { xs: 'none', sm: 'translateY(-8px)' } // No hover effect on mobile
                     }
                   }}>
-                    { !project.isStatic && (
+                    { (!project.isStatic && !project._id) && (
                       <Chip 
                         label="NEW" 
                         color="error" 
                         size="small" 
-                        sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold' }} 
+                        sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold', fontSize: '0.7rem' }} 
                       />
                     )}
                     <CardMedia

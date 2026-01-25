@@ -98,10 +98,18 @@ const Footer = () => {
             
             {/* Social Media Icons */}
             <Box sx={{ display: 'flex', gap: 1, mb: 2, justifyContent: { xs: 'center', sm: 'flex-start' } }}> {/* Center on mobile */}
-              {[Facebook, Twitter, Instagram, YouTube, LinkedIn].map((Icon, index) => (
+              {[
+                { Icon: Facebook, href: '#' },
+                { Icon: Twitter, href: '#' },
+                { Icon: Instagram, href: 'https://www.instagram.com/baho_africa?igsh=ajQ4M3Q0M3IxczVu&utm_source=qr' },
+                { Icon: YouTube, href: '#' },
+                { Icon: LinkedIn, href: '#' }
+              ].map(({ Icon, href }, index) => (
                 <IconButton
                   key={index}
-                  href="#"
+                  href={href}
+                  target={href !== '#' ? '_blank' : undefined}
+                  rel={href !== '#' ? 'noopener noreferrer' : undefined}
                   sx={{
                     color: 'white',
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',

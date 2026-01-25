@@ -26,7 +26,25 @@ const ProjectsPage = () => {
     const fetchProjects = async () => {
       try {
         const data = await projectService.getAll().catch(() => []);
-        setProjects([...data, ...STATIC_PROJECTS]);
+        
+        // Define 'new' as items created in the last 7 days
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        const markedProjects = data.map(project => ({
+          ...project,
+          isStatic: false, // Dynamic projects are not static
+          isNew: project.createdAt ? new Date(project.createdAt) > sevenDaysAgo : false
+        }));
+        
+        // Sort projects: new items first, then by date
+        const sortedProjects = [...markedProjects].sort((a, b) => {
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return new Date(b.createdAt || b.scope?.startDate || 0) - new Date(a.createdAt || a.scope?.startDate || 0);
+        });
+
+        setProjects([...sortedProjects, ...STATIC_PROJECTS]);
       } catch (error) {
         console.error('Error fetching projects:', error);
         setProjects(STATIC_PROJECTS);
@@ -106,12 +124,12 @@ const ProjectsPage = () => {
             {projects.map((project) => (
               <Grid item xs={12} sm={6} md={6} lg={4} key={project._id || project.id}> {/* Responsive grid - 1 column on xs, 2 on sm, 2 on md, 3 on lg */}
                 <StyledCard sx={{ position: 'relative' }}>
-                  { !project.isStatic && (
+                  { (!project.isStatic && project.isNew) && (
                     <Chip 
                       label="NEW" 
                       color="error" 
                       size="small" 
-                      sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold' }} 
+                      sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, fontWeight: 'bold', fontSize: '0.7rem' }} 
                     />
                   )}
                   <CardMedia
