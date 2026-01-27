@@ -19,8 +19,8 @@ const corsOptions = {
     
     // In production, allow your specific frontend domain
     const allowedOrigins = [
-      'https://bahoafricanew.onrender.com',  // Replace with your actual frontend URL
-      'https://your-actual-frontend-domain.com',  // Add your custom domain if you have one
+      'https://www.bahoafrica.rw/',  // Replace with your actual frontend URL
+      'https://www.bahoafrica.rw/',  // Add your custom domain if you have one
       'http://localhost:3000', // Allow local development
       'http://localhost:3001', // Alternative local dev port
       'http://localhost:8080'  // Another common dev port
