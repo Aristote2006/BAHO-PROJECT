@@ -14,22 +14,28 @@ const PORT = process.env.PORT || 5000;
 // CORS configuration - Allow specific origins for production
 const corsOptions = {
   origin: function (origin, callback) {
-    // In development, allow localhost origins
+    // In development, allow localhost origins and any origin for testing
     if (process.env.NODE_ENV !== 'production' || !origin) return callback(null, true);
     
-    // In production, allow your specific frontend domain
+    // In production, allow your specific frontend domains
     const allowedOrigins = [
-      'https://www.bahoafrica.rw/',  // Replace with your actual frontend URL
-      'https://www.bahoafrica.rw/',  // Add your custom domain if you have one
+      'https://www.bahoafrica.rw',  // Your new custom domain
+      'https://baho-project.onrender.com',  // Your old Render domain
+      'https://bahoafricanew.onrender.com',  // Your previous Render domain from .env
       'http://localhost:3000', // Allow local development
       'http://localhost:3001', // Alternative local dev port
       'http://localhost:8080'  // Another common dev port
     ];
     
-    const isAllowed = origin ? allowedOrigins.some(allowed => origin.includes(allowed)) : true;
+    // Check if origin is in allowed list or if it's undefined (mobile apps, etc.)
+    // Also allow any subdomain of bahoafrica.rw for flexibility
+    const isAllowed = !origin || 
+                      allowedOrigins.includes(origin) || 
+                      (origin && origin.endsWith('.bahoafrica.rw'));
     callback(null, isAllowed);
   },
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
 };
 
 app.use(cors(corsOptions));
