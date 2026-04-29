@@ -28,7 +28,7 @@ const Navbar = () => {
     { text: 'Events', path: '/events' },
     { text: 'Milestones', path: '/milestones' },
     { text: 'Team', path: '/team' },
-    { text: 'Gallery', path: 'https://drive.google.com/drive/folders/1_Cd8PJavkutn-_uON063UuCmAqkaDSBN?usp=drive_link', isExternal: true },
+    { text: 'Gallery', path: 'https://bahoafrica.pixieset.com', isExternal: true },
     { text: 'Contact', path: '/contact' },
   ];
 
@@ -49,7 +49,7 @@ const Navbar = () => {
     { text: 'Events', path: '/events' },
     { text: 'Milestones', path: '/milestones' },
     { text: 'Team', path: '/team' },
-    { text: 'Gallery', path: 'https://drive.google.com/drive/folders/1_Cd8PJavkutn-_uON063UuCmAqkaDSBN?usp=drive_link', isExternal: true },
+    { text: 'Gallery', path: 'https://bahoafrica.pixieset.com', isExternal: true },
     { text: 'Contact', path: '/contact' },
   ];
 

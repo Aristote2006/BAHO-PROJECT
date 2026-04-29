@@ -267,7 +267,7 @@ const HomePage = () => {
               
               <Button 
                 component={Link} 
-                to="/projects" 
+                to="https://bahoafrica.pixieset.com" 
                 variant="outlined" 
                 size="large" 
                 sx={{ 
@@ -284,7 +284,7 @@ const HomePage = () => {
                   }
                 }}
               >
-                Our Projects
+                View Gallery
               </Button>
               
               <Button 
