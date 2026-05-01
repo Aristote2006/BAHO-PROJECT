@@ -287,27 +287,7 @@ const HomePage = () => {
                 View Gallery
               </Button>
               
-              <Button 
-                component={Link} 
-                to="/contact" 
-                variant="outlined" 
-                size="large" 
-                sx={{ 
-                  borderColor: '#D4AF37', 
-                  color: 'white',
-                  px: { xs: 3, sm: 4 }, // Responsive padding
-                  py: { xs: 1, sm: 1.5 }, // Responsive padding
-                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' }, // Responsive font size
-                  minWidth: { xs: '200px', sm: 'auto' }, // Minimum width on mobile
-                  '&:hover': {
-                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                    borderColor: '#D4AF37',
-                  }
-                }}
-              >
-                Contact Us
-              </Button>
-            </Box>
+                          </Box>
           </Box>
         </Container>
       </HeroSection>
