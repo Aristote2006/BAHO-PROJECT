@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
@@ -20,6 +20,7 @@ import DeploymentTestPage from './pages/DeploymentTestPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import SEO from './components/SEO';
 
 // Custom responsive theme
 const theme = createTheme({
@@ -97,13 +98,15 @@ const AppContent = () => {
   
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <SEO />
       <Navbar />
       <main style={{ 
         flex: 1, 
         paddingTop: '0px', // Remove extra padding below navbar
       }}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/what-we-do" element={<WhatWeDoPage />} />
           <Route path="/projects" element={<ProjectsPage />} />

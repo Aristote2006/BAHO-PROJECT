@@ -21,7 +21,7 @@ const Navbar = () => {
 
   // Conditionally render navItems based on authentication status
   const allNavItems = [
-    { text: 'Home', path: '/' },
+    { text: 'Home', path: '/home' },
     { text: 'About', path: '/about' },
     { text: 'What We Do', path: '/what-we-do' },
     { text: 'Projects', path: '/projects' },
@@ -34,7 +34,7 @@ const Navbar = () => {
 
   // Public navigation items to show on desktop
   const desktopNavItems = [
-    { text: 'Home', path: '/' },
+    { text: 'Home', path: '/home' },
     { text: 'Projects', path: '/projects' },
     { text: 'Events', path: '/events' },
     { text: 'Contact', path: '/contact' },
@@ -42,7 +42,7 @@ const Navbar = () => {
 
   // Items to show in the mobile menu
   const mobileNavItems = [
-    { text: 'Home', path: '/' },
+    { text: 'Home', path: '/home' },
     { text: 'About', path: '/about' },
     { text: 'What We Do', path: '/what-we-do' },
     { text: 'Projects', path: '/projects' },
@@ -168,7 +168,7 @@ const Navbar = () => {
     >
       <Toolbar sx={{ justifyContent: 'space-between', minHeight: '60px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+          <Link to="/home" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
             <Box
               component="img"
               src="/images/BAHO_BRAND_yellow.png"

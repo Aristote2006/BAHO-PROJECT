@@ -57,7 +57,7 @@ const Footer = () => {
             </Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' }, gap: 1 }}> {/* Responsive grid */}
               {[
-                { text: 'Home', path: '/' },
+                { text: 'Home', path: '/home' },
                 { text: 'About', path: '/about' },
                 { text: 'Projects', path: '/projects' },
                 { text: 'Events', path: '/events' },
