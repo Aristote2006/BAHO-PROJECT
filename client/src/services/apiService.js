@@ -13,21 +13,7 @@ const safeJsonParse = async (response) => {
       const data = await response.json();
       console.log('Successfully parsed JSON response:', data);
       
-      // Check if response is empty/invalid
-      if (response.status >= 400 || 
-          (!data.user && !data.token && data.message === "" && data.contentType === null)) {
-        console.warn('Received invalid or empty response:', data);
-        // Try to get the raw text anyway to see what's actually returned
-        const rawText = await response.text().catch(() => '');
-        return { 
-          message: 'Invalid response received', 
-          contentType: contentType, 
-          rawText: rawText || 'No content',
-          status: response.status,
-          statusText: response.statusText
-        };
-      }
-      
+      // Return data as-is, whether it's success or error - let the caller handle status codes
       return data;
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
@@ -126,6 +112,17 @@ export const eventService = {
     });
     if (!response.ok) {
       throw new Error('Failed to fetch events');
+    }
+    return await safeJsonParse(response);
+  },
+  get: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch event');
     }
     return await safeJsonParse(response);
   },

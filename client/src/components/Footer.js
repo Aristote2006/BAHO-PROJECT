@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Container, Grid, Typography, Link, IconButton } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, YouTube, LinkedIn } from '@mui/icons-material';
 
 const Footer = () => {
@@ -65,7 +66,8 @@ const Footer = () => {
               ].map((link, index) => (
                 <Link
                   key={index}
-                  href={link.path}
+                  component={RouterLink}
+                  to={link.path}
                   sx={{
                     color: 'white',
                     textDecoration: 'none',

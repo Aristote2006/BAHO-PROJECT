@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Grid, Card, CardContent, CardMedia, Button, Chip, CircularProgress } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { CalendarToday, LocationOn, AccessTime } from '@mui/icons-material';
 import { eventService } from '../services/apiService';
@@ -160,7 +161,7 @@ const EventsPage = () => {
             fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } // Responsive font size
           }}
         >
-          Featured Events
+          All Events
         </Typography>
 
         {error && (
@@ -179,9 +180,9 @@ const EventsPage = () => {
 
         {!error && (
           <Grid container spacing={{ xs: 3, sm: 4, md: 6 }}> {/* Responsive spacing */}
-            {events.filter(event => event.featured).length > 0 ? (
-              events.filter(event => event.featured).map((event, index) => (
-                <Grid item xs={12} sm={6} md={6} lg={4} key={event._id}> {/* Responsive grid - 1 column on xs, 2 on sm, 2 on md, 3 on lg */}
+            {events.length > 0 ? (
+              events.map((event, index) => (
+                <Grid item xs={12} sm={6} md={6} lg={4} key={event._id || event.id}> {/* Responsive grid - 1 column on xs, 2 on sm, 2 on md, 3 on lg */}
                   <StyledCard sx={{ position: 'relative' }}>
                     { (!event.isStatic && event.isNew) && (
                       <Chip 
@@ -295,6 +296,8 @@ const EventsPage = () => {
                       </Typography>
                       
                       <Button
+                        component={Link}
+                        to={`/events/${event._id || event.id}`}
                         variant="contained"
                         sx={{ 
                           mt: 0.5, // Minimal margin
@@ -304,12 +307,13 @@ const EventsPage = () => {
                           fontSize: { xs: '0.7rem', sm: '0.75rem' }, // Smaller font size
                           py: { xs: 0.5, sm: 0.7 }, // Smaller padding
                           px: { xs: 1, sm: 1.5 }, // Smaller padding
+                          textDecoration: 'none',
                           '&:hover': {
                             backgroundColor: '#b8972d',
                           }
                         }}
                       >
-                        Register Now
+                        View Details
                       </Button>
                     </CardContent>
                   </StyledCard>
@@ -325,117 +329,13 @@ const EventsPage = () => {
                       fontSize: { xs: '1rem', sm: '1.2rem' } // Responsive font size
                     }}
                   >
-                    No featured events available at the moment. Check back soon!
+                    No events available at the moment. Check back soon!
                   </Typography>
                 </Box>
               </Grid>
             )}
           </Grid>
         )}
-
-        {/* Past Events Section */}
-        <Box sx={{ mt: { xs: 8, sm: 10, md: 12 } }}> {/* Responsive margin */}
-          <Typography 
-            variant="h3" 
-            component="h2" 
-            className="text-fade-in-up" 
-            style={{ animationDelay: '0.1s' }} 
-            align="center" 
-            gutterBottom 
-            sx={{ 
-              color: '#01234B', 
-              fontWeight: 600, 
-              mb: { xs: 4, sm: 6 }, // Responsive margin
-              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } // Responsive font size
-            }}
-          >
-            Other Events
-          </Typography>
-          
-          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}> {/* Responsive spacing */}
-            {events.filter(event => !event.featured).length > 0 ? (
-              events.filter(event => !event.featured).map((event) => (
-                <Grid item xs={12} sm={6} key={event._id}> {/* Responsive grid - 1 column on xs, 2 on sm+ */}
-                  <Card 
-                    sx={{ 
-                      borderRadius: 2,
-                      background: 'rgba(255, 255, 255, 0.8)',
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(212, 175, 55, 0.2)',
-                      transition: 'transform 0.3s ease',
-                      '&:hover': {
-                        transform: { xs: 'none', sm: 'translateX(10px)' }, // No hover effect on mobile
-                      }
-                    }}
-                  >
-                    <CardContent sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 }, p: { xs: 1, sm: 2 } }}> {/* Responsive padding and gap */}
-                      <Box sx={{ flex: 1 }}>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            color: '#01234B', 
-                            fontWeight: 600, 
-                            mb: 0.5, // Reduced margin
-                            fontSize: { xs: '0.9rem', sm: '1rem' } // Responsive font size
-                          }}
-                        >
-                          {event.title}
-                        </Typography>
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
-                            color: '#4A4A4A', 
-                            mb: 0.5, // Reduced margin
-                            fontSize: { xs: '0.7rem', sm: '0.8rem' } // Responsive font size
-                          }}
-                        >
-                          {formatDate(event.scope.startDate)} • {event.location}
-                        </Typography>
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
-                            color: '#666', 
-                            fontSize: { xs: '0.65rem', sm: '0.75rem' }, // Responsive font size
-                            display: { xs: '-webkit-box', sm: 'block' }, // Line clamping on mobile
-                            WebkitLineClamp: { xs: 2, sm: 1 },
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden'
-                          }}
-                        >
-                          {event.description.substring(0, 100)}...
-                        </Typography>
-                      </Box>
-                      <Chip
-                        label="View Details"
-                        sx={{ 
-                          backgroundColor: '#01234B', 
-                          color: '#D4AF37',
-                          fontWeight: 600,
-                          fontSize: { xs: '0.6rem', sm: '0.7rem' } // Responsive font size
-                        }}
-                      />
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))
-            ) : (
-              <Grid item xs={12}>
-                <Box sx={{ textAlign: 'center', py: { xs: 3, sm: 4 } }}>
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      color: '#01234B',
-                      fontSize: { xs: '1rem', sm: '1.2rem' } // Responsive font size
-                    }}
-                  >
-                    No other events available at the moment.
-                  </Typography>
-                </Box>
-              </Grid>
-            )}
-          </Grid>
-        </Box>
       </Container>
     </div>
   );

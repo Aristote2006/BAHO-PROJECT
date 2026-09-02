@@ -8,6 +8,7 @@ import AboutPage from './pages/AboutPage';
 import WhatWeDoPage from './pages/WhatWeDoPage';
 import ProjectsPage from './pages/ProjectsPage';
 import EventsPage from './pages/EventsPage';
+import EventDetailPage from './pages/EventDetailPage';
 import MilestonesPage from './pages/MilestonesPage';
 import TeamPage from './pages/TeamPage';
 import ContactPage from './pages/ContactPage';
@@ -107,6 +108,7 @@ const AppContent = () => {
           <Route path="/what-we-do" element={<WhatWeDoPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/milestones" element={<MilestonesPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -695,16 +695,21 @@ const HomePage = () => {
                     <Box p={{ xs: 1, sm: 1.5 }} pt={0}>
                       <Button 
                         component={Link} 
-                        to="/events" 
+                        to={`/events/${event._id || event.id}`}
                         fullWidth 
                         variant="outlined" 
                         sx={{ 
                           color: '#01234B', 
                           borderColor: '#01234B',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem' } // Smaller font size
+                          fontSize: { xs: '0.75rem', sm: '0.8rem' }, // Smaller font size
+                          '&:hover': {
+                            backgroundColor: 'rgba(1, 35, 75, 0.05)',
+                            borderColor: '#D4AF37',
+                            color: '#D4AF37'
+                          }
                         }}
                       >
-                        Learn More
+                        View Details
                       </Button>
                     </Box>
                   </Card>
